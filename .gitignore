@@ -121,3 +121,4 @@ logs/
 *.csv
 !.dvc
 data
+wget-log
