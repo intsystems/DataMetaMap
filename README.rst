@@ -1,40 +1,68 @@
-|test| |codecov| |docs|
-
-.. |test| image:: https://github.com/intsystems/ProjectTemplate/workflows/test/badge.svg
-    :target: https://github.com/intsystems/ProjectTemplate/tree/master
-    :alt: Test status
-    
-.. |codecov| image:: https://img.shields.io/codecov/c/github/intsystems/ProjectTemplate/master
-    :target: https://app.codecov.io/gh/intsystems/ProjectTemplate
-    :alt: Test coverage
-    
-.. |docs| image:: https://github.com/intsystems/ProjectTemplate/workflows/docs/badge.svg
-    :target: https://intsystems.github.io/ProjectTemplate/
-    :alt: Docs status
+<div align="center">  
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="assets/logo_full.jpg" width="200px">
+      <source media="(prefers-color-scheme: light)" srcset="assets/logo_full.jpg" width="200px">
+      <img alt="DataMetaMap" src="assets/logo_full.jpg" width="200px">
+    </picture>
+    <h1> DataMetaMap </h1>
+    <p align="center"> Datasetes vector representation </p>
+</div>
 
 
-.. class:: center
+<p align="center">
+    <a href="https://github.com/intsystems/DataMetaMap/blob/main/LICENSE">
+        <img alt="License" src="https://badgen.net/github/license/intsystems/relaxit?color=green" />
+    </a>
+    <a href="https://github.com/intsystems/DataMetaMap/graphs/contributors">
+        <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/intsystems/relaxit" />
+    </a>
+    <a href="https://github.com/intsystems/DataMetaMap/issues">
+        <img alt="Issues" src="https://img.shields.io/github/issues-closed/intsystems/relaxit?color=0088ff" />
+    </a>
+    <a href="https://github.com/intsystems/DataMetaMap/pulls">
+        <img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr-closed/intsystems/relaxit?color=7f29d6" />
+    </a>
+</p>
 
-    :Название исследуемой задачи: Мое название работы
-    :Тип научной работы: M1P/НИР/CoIS
-    :Автор: Имя Отчество Фамилия
-    :Научный руководитель: степень, Фамилия Имя Отчество
-    :Научный консультант(при наличии): степень, Фамилия Имя Отчество
+"DataMetaMap" is Python library designed to represent various multiple datasets in the same vector space for comparision them with each other. Library is offering a suite of advanced datasete embedding techniques compatible with PyTorch.
 
-Abstract
-========
+## 📬 Assets
 
-Purus sit amet luctus venenatis lectus magna fringilla. Condimentum id venenatis a condimentum vitae sapien. Auctor neque vitae tempus quam pellentesque nec nam aliquam. Eget egestas purus viverra accumsan in. Nam aliquam sem et tortor. Donec et odio pellentesque diam volutpat commodo. Odio pellentesque diam volutpat commodo sed egestas. Sit amet dictum sit amet justo. Pellentesque sit amet porttitor eget. Imperdiet sed euismod nisi porta lorem mollis aliquam ut. Quis varius quam quisque id diam vel quam elementum. Ornare lectus sit amet est placerat in. Vulputate dignissim suspendisse in est ante. Elit sed vulputate mi sit amet mauris. Egestas sed tempus urna et pharetra pharetra. Viverra tellus in hac habitasse platea dictumst vestibulum rhoncus.
+1. [Technical Meeting 1 - Presentation](https://github.com/intsystems/DataMetaMap/blob/master/assets/BMM_technical_1.pdf)
 
-Research publications
-===============================
-1. 
 
-Presentations at conferences on the topic of research
-================================================
-1. 
+## 💡 Motivation
+We need an ability to compare information similarity between various datasets. If so, we can find the most similar dataset to our target task dataset. Choosing the best pretrain neural net on it can narrow down the choice of potential candidates for pretrain. 
 
-Software modules developed as part of the study
-======================================================
-1. A python package *mylib* with all implementation `here <https://github.com/intsystems/ProjectTemplate/tree/master/src>`_.
-2. A code with all experiment visualisation `here <https://github.comintsystems/ProjectTemplate/blob/master/code/main.ipynb>`_. Can use `colab <http://colab.research.google.com/github/intsystems/ProjectTemplate/blob/master/code/main.ipynb>`_.
+## 🗃 Algorithms
+- [x] Maximum Mean Discrepancy, also see [📝 review](https://arxiv.org/abs/1605.09522) 
+- [x] Task2Vec, also see [📝 paper](https://arxiv.org/pdf/1902.03545)
+- [x] Dataset2Vec, also see [📝 paper](https://arxiv.org/pdf/1905.11063) 
+- [x] Wasserstein Task Embedding, also see [📝 paper](https://arxiv.org/pdf/2208.11726) 
+
+
+## 🛠️ Install
+
+TODO
+
+## 🚀 Quickstart 
+TODO
+
+## 🎮 Demo
+TODO
+
+## 📚 Stack
+TODO
+  
+## 🧩 Some details
+TODO
+
+## 👥 Contributors
+- [Vladislav Minashkin](https://github.com/minashkinvladislav) (Project planning, Benchmarking, Algorithms)
+- [Papay Ivan](https://github.com/papayiv) (Documentation writing, Code writing, Algorithms)
+- [Meshkov Vlad](https://github.com/VseMeshkov) (Blog post, Demo, Algorithms)
+- [Stepanov Ilya](https://github.com/ILIAHHne63) (Tech. report, Code writing, Algorithms)
+- You are welcome to contribute to our project!
+
+## 🔗 Useful links
+Пока что тут ничего нет
