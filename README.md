@@ -1,8 +1,8 @@
 <div align="center">  
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="assets/logo_full.jpg" width="200px">
-      <source media="(prefers-color-scheme: light)" srcset="assets/logo_full.jpg" width="200px">
-      <img alt="DataMetaMap" src="assets/logo_full.jpg" width="200px">
+      <source media="(prefers-color-scheme: dark)" srcset="assets/logo_full.jpg" width="400px">
+      <source media="(prefers-color-scheme: light)" srcset="assets/logo_full.jpg" width="400px">
+      <img alt="DataMetaMap" src="assets/logo_full.jpg" width="400px">
     </picture>
     <h1> DataMetaMap </h1>
     <p align="center"> Datasetes vector representation </p>
