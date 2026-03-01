@@ -11,16 +11,16 @@
 
 <p align="center">
     <a href="https://github.com/intsystems/DataMetaMap/blob/main/LICENSE">
-        <img alt="License" src="https://badgen.net/github/license/intsystems/relaxit?color=green" />
+        <img alt="License" src="https://badgen.net/github/license/intsystems/DataMetaMap?color=green" />
     </a>
     <a href="https://github.com/intsystems/DataMetaMap/graphs/contributors">
-        <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/intsystems/relaxit" />
+        <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/intsystems/DataMetaMap" />
     </a>
     <a href="https://github.com/intsystems/DataMetaMap/issues">
-        <img alt="Issues" src="https://img.shields.io/github/issues-closed/intsystems/relaxit?color=0088ff" />
+        <img alt="Issues" src="https://img.shields.io/github/issues-closed/intsystems/DataMetaMap?color=0088ff" />
     </a>
     <a href="https://github.com/intsystems/DataMetaMap/pulls">
-        <img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr-closed/intsystems/relaxit?color=7f29d6" />
+        <img alt="GitHub Pull Requests" src="https://img.shields.io/github/issues-pr-closed/intsystems/DataMetaMap?color=7f29d6" />
     </a>
 </p>
 
