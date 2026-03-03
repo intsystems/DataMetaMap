@@ -1,14 +1,42 @@
-# DataMetaMap Backlog
-## Goal
-DataMetaMap compares datasets in a unified vector space to find similarities. It operates on the principle that if a model performs well on one dataset, it will also perform well on semantically similar (nearby in embedding space) data.
+# DataMetaMap Project Plan
 
-## Development Steps:
- - Research & Method Study – Review existing approaches for dataset's embedding, similarity measurement, and transferability estimation. 3
- - Data Collection – Gather a diverse set of datasets for experimentation and benchmarking.
- - Method Implementation – Implement core algorithms to embed datasets into a shared vector space and compute similarities.
- - Test Coverage – Develop unit and integration tests to ensure reliability.
- - Benchmark & Visualization – Run benchmarks and create visualizations (e.g., similarity matrices).
- - Technical Report – Document methodology, experiments, and results.
- - Documentation – Write comprehensive user and contributor documentation.
- - Blog Post – Prepare an explanatory blog post highlighting the project's value.
- - Demo Code – Provide example notebooks/scripts demonstrating real-world usage.
+## Project Goal
+DataMetaMap aims to compare datasets within a unified vector space to identify semantic similarities. The core idea is that if a model performs well on one dataset, it will likely perform well on semantically similar datasets nearby in embedding space.
+
+---
+
+## Development Phases & Tasks
+
+### Phase 1: Research and Preparation
+- **Literature Review**  
+  Study existing methods for dataset embedding, similarity measurement, and transferability estimation to identify best practices.
+
+- **Data Collection**  
+  Gather a diverse collection of datasets for experimentation, ensuring they represent various domains and formats.
+
+- **Planning and Specifications**  
+  Define technical specifications and success criteria based on research findings and data availability.
+
+---
+
+### Phase 2: Implementation and Testing
+- **Core Algorithm Development**  
+  Implement algorithms to embed datasets into a shared vector space and compute similarity metrics between them.
+
+- **Testing and Quality Assurance**  
+  Develop unit and integration tests to validate correctness, reliability, and performance of the implemented methods.
+
+- **Benchmarking and Visualization**  
+  Run benchmarks on collected datasets and produce visual outputs such as similarity matrices to analyze and interpret results.
+
+---
+
+### Phase 3: Documentation and Dissemination
+- **Technical Report**  
+  Document the methodology, experimental setup, and findings in a comprehensive technical report.
+
+- **User and Developer Documentation**  
+  Create detailed documentation for users and contributors, including setup guides and API references.
+
+- **Demo Examples and Blog Post**  
+  Prepare example notebooks or scripts demonstrating real-world use cases, and write an explanatory blog post highlighting project value and insights.
