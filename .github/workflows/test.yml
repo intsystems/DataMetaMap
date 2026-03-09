@@ -28,7 +28,7 @@ jobs:
 
       - name: Testing
         run: |
-          PYTHONPATH=src/ pytest tests/ --cov=DataMetaMap --cov-report=xml
+          PYTHONPATH=src/ pytest tests/ --cov=data_meta_map --cov-report=xml
 
       - name: Generate coverage badge
         run: |
