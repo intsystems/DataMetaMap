@@ -1,36 +1,55 @@
-name: test
+name: Testing
+
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  pytest:
-    name: pytest
+  build:
     runs-on: ubuntu-latest
-    
-    strategy:
-      matrix:
-        python-version: [3.7]
-        
     steps:
-      - name: Set up Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: 3.7
-
       - name: Checkout 🛎️
-        uses: actions/checkout@v2
-        
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Install Dependencies
         run: |
+          pip install torch
+          pip install gymnasium
+          pip install pyro-ppl
+          pip install POT
+          pip install numpy
+          pip install scikit-learn
+          pip install tqdm
           pip install -U pytest pytest-cov
-          pip install -U -r src/requirements.txt
-          
+          ls ./
+
       - name: Testing
         run: |
-          PYTHONPATH=src/ pytest tests/ --cov=mylib --cov-report=xml
-          
-      - name: Upload to Codecov
-        uses: codecov/codecov-action@v2
-        with:
-          files: ./coverage.xml,
-          fail_ci_if_error: true
-          verbose: true
+          PYTHONPATH=src/ pytest tests/ --cov=DataMetaMap --cov-report=xml
+
+      - name: Generate coverage badge
+        run: |
+          python badge_generator.py
+
+      - name: Check for changes in coverage badge
+        id: check_changes
+        run: |
+          if git diff --exit-code -- coverage-badge.svg; then
+            echo "No changes in coverage badge"
+            echo "::set-output name=changes::false"
+          else
+            echo "Changes detected in coverage badge"
+            echo "::set-output name=changes::true"
+          fi
+
+      - name: Commit and push coverage badge
+        if: steps.check_changes.outputs.changes == 'true'
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add coverage-badge.svg
+          git commit -m "Update coverage badge"
+          git push origin main
