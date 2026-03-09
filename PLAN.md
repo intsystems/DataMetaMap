@@ -49,6 +49,11 @@ DataMetaMap aims to compare datasets within a unified vector space to identify s
 
 - **Baseline Selection**  
   Identify and select baseline methods from literature for comparison during benchmarking.
+  Description (done by Meshkov Vladislav):
+    - Establish baselines for each embedding method as specified in the paper
+    - Assess baselines from the literature and determine their appropriateness for our benchmarking framework
+    - Conduct a literature review to identify similar papers and gather additional straightforward baselines for meaningful comparison
+    - Document baseline descriptions in the benchmark specifications, along with rationale for their inclusion
 
 - **Data Collection**  
   Gather a diverse collection of datasets for experimentation, ensuring they represent various domains and formats.
