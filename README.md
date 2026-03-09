@@ -8,6 +8,17 @@
     <p align="center"> Datasetes vector representation </p>
 </div>
 
+<p align="center">
+    <a href="https://github.com/intsystems/DataMetaMap/tree/main/tests">
+        <img alt="Coverage_2" src="https://github.com/intsystems/DataMetaMap/actions/workflows/test.yml/badge.svg" />
+    </a>
+    <a href="https://github.com/intsystems/DataMetaMap/tree/main/tests">
+        <img alt="Coverage" src="coverage-badge.svg" />
+    </a>
+    <a href="https://intsystems.github.io/DataMetaMap">
+        <img alt="Docs" src="https://github.com/intsystems/DataMetaMap/actions/workflows/docs.yml/badge.svg" />
+    </a>
+</p>
 
 <p align="center">
     <a href="https://github.com/intsystems/DataMetaMap/blob/main/LICENSE">
