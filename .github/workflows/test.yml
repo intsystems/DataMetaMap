@@ -39,7 +39,7 @@ jobs:
         run: |
           if git diff --exit-code -- coverage-badge.svg; then
             echo "No changes in coverage badge"
-            echo "::set-output name=changes::false"
+            echo "::set-output name=changes::true"
           else
             echo "Changes detected in coverage badge"
             echo "::set-output name=changes::true"
