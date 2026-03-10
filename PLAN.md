@@ -64,6 +64,12 @@ DataMetaMap aims to compare datasets within a unified vector space to identify s
 
 - **Evaluation Metrics Definition**  
   Define quantitative metrics to evaluate embedding quality and similarity measurement accuracy.
+  
+  Description (done by Stepanov Ilya):
+    - Define cosine similarity, Euclidean distance and kernel-based distance as core metrics to evaluate geometric separability and structural relationships between dataset embeddings in the latent space
+    - Define Maximum Mean Discrepancy (MMD) metric as described in the original paper
+    - Ensure that all embedding methods and baselines will be evaluate using all metrics so that comparison across methods is consistent and reproducible
+
 
 - **Planning and Specifications**  
   Define technical specifications and success criteria based on research findings and data availability.
