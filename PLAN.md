@@ -108,11 +108,13 @@ DataMetaMap aims to compare datasets within a unified vector space to identify s
   Document the methodology, experimental setup, and findings in a comprehensive technical report.
 
 - **User and Developer Documentation**
+  Build documentation.
+
   
   Description (done by Papay Ivan):
-      - create detailed documentation for users and contributors, including setup guides and API references
-      - create github.io page where user can find documentation for all classes and their methods
-      - Github.io page must have headers for functions and links to their each source code. 
+    - create detailed documentation for users and contributors, including setup guides and API references
+    - create github.io page where user can find documentation for all classes and their methods
+    - Github.io page must have headers for functions and links to their each source code. 
 
 - **Demo Examples and Blog Post**  
   Prepare example notebooks or scripts demonstrating real-world use cases, and write an explanatory blog post highlighting project value and insights.
