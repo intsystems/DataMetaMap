@@ -62,6 +62,12 @@ DataMetaMap aims to compare datasets within a unified vector space to identify s
 - **Data Preprocessing Pipeline**  
   Design and implement preprocessing steps to handle different dataset formats and ensure consistent input for embedding methods.
 
+
+  Description (done by Minashkin Vladislav):
+    - Handle diverse data types: images, text, tabular, and time series with type-specific loaders
+    - Fill missing values and remove bad data points
+    - Save all settings for exact reproduction
+
 - **Evaluation Metrics Definition**  
   Define quantitative metrics to evaluate embedding quality and similarity measurement accuracy.
   
