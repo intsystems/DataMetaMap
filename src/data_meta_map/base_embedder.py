@@ -19,11 +19,25 @@ class SupportsGetItem(Protocol):
     Protocol for objects with __getitem__ and __len__ interface.
     Ensures compatibility with both Dataset and custom iterable objects.
     """
+
     def __getitem__(self, index: int) -> Tuple[Any, int]: ...
     def __len__(self) -> int: ...
 
 
 class BaseEmbedder(ABC):
+    def __init__(
+        self
+    ):
+        pass
+
+    @abstractmethod
+    def embed(self, *args, **kwargs):
+        raise NotImplementedError(
+            "Override this method in your Embedder class")
+
+
+# DEPRECATED
+class BaseEmbedderDEPRECATED(ABC):
     """
     Abstract base class for dataset embedding.
 
@@ -191,7 +205,8 @@ class BaseEmbedder(ABC):
         feature_dim = X.shape[1]
 
         means = torch.zeros((num_classes, feature_dim), device=self.device)
-        covs = torch.zeros((num_classes, feature_dim, feature_dim), device=self.device)
+        covs = torch.zeros(
+            (num_classes, feature_dim, feature_dim), device=self.device)
 
         for idx, label in enumerate(unique_labels):
             mask = (Y == label)
@@ -201,7 +216,8 @@ class BaseEmbedder(ABC):
                 covs[idx] = torch.cov(class_samples.T)
             else:
                 # For single sample, covariance is undefined — use zero matrix
-                covs[idx] = torch.zeros((feature_dim, feature_dim), device=self.device)
+                covs[idx] = torch.zeros(
+                    (feature_dim, feature_dim), device=self.device)
 
         return means, covs
 

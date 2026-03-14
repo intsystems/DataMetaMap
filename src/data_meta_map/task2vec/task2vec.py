@@ -26,6 +26,8 @@ from torch.utils.data import DataLoader, Dataset
 from torch.optim.optimizer import Optimizer
 from data_meta_map.task2vec.utils import AverageMeter, get_error, get_device
 
+from data_meta_map import BaseEmbedder
+
 
 class Embedding:
     def __init__(self, hessian, scale, meta=None):
@@ -63,7 +65,7 @@ def task2vec(probe_network, dataset: Dataset, skip_layers=0, max_samples=None, c
     return embed
 
 
-class Task2Vec:
+class Task2Vec(BaseEmbedder):
 
     def __init__(self, model: ProbeNetwork, skip_layers=0, max_samples=None, classifier_opts=None,
                  method='montecarlo', method_opts=None, loader_opts=None, bernoulli=False):
