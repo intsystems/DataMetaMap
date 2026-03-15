@@ -92,7 +92,7 @@ class Task2Vec(BaseEmbedder):
         self.loss_fn = nn.CrossEntropyLoss() if not self.bernoulli else nn.BCEWithLogitsLoss()
         self.loss_fn = self.loss_fn.to(self.device)
 
-    def embed(self, dataset: Dataset, create_final_embedding: bool = False):
+    def embed(self, dataset: Dataset, create_final_embedding: bool = True):
         # Cache the last layer features (needed to train the classifier) and (if needed) the intermediate layer features
         # so that we can skip the initial layers when computing the embedding
         if self.skip_layers > 0:

@@ -179,7 +179,7 @@ def estimate_task_performance(config):
     device = torch.device(config.device)
     model = MLP(input_dim=512,
                 hidden_dim=config['estimate_network_params']['hidden_dim'],
-                num_classes=config['estimate_network_params']['num_classes']).to(device)
+                num_classes=max(y_test) + 1).to(device)
     optimizer = torch.optim.Adam(
         model.parameters(), lr=config['training']['lr'])
 
@@ -241,12 +241,14 @@ def apply_pretrain(config):
 
 
 def inference_task(config):
-    best_path = config['paths']['checkpoint']
     device = torch.device(config.device)
 
     model = get_model(config['model']['name'],
                       pretrained=config['model']['pretrained']).to(device)
-    model.load_state_dict(torch.load(best_path))
+
+    if not config['use_basic_model']:
+        best_path = config['paths']['checkpoint']
+        model.load_state_dict(torch.load(best_path))
     model.eval()
 
     embedder = torch.nn.Sequential(*list(model.children())[:-1]).to(device)
@@ -271,7 +273,7 @@ def inference_task(config):
 @hydra.main(config_path=".", config_name="config", version_base=None)
 def main(config: DictConfig):
     _, pretrain_logs = apply_pretrain(
-        config) if config['need_pretrain'] else {}
+        config) if config['need_pretrain'] else None, {}
     task_logs = {}
     if not config['pretrain_only']:
         inference_task(config)
