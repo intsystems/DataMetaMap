@@ -26,6 +26,8 @@ from torch.utils.data import DataLoader, Dataset
 from torch.optim.optimizer import Optimizer
 from data_meta_map.task2vec.utils import AverageMeter, get_error, get_device
 
+from data_meta_map import BaseEmbedder
+
 
 class Embedding:
     def __init__(self, hessian, scale, meta=None):
@@ -63,7 +65,7 @@ def task2vec(probe_network, dataset: Dataset, skip_layers=0, max_samples=None, c
     return embed
 
 
-class Task2Vec:
+class Task2Vec(BaseEmbedder):
 
     def __init__(self, model: ProbeNetwork, skip_layers=0, max_samples=None, classifier_opts=None,
                  method='montecarlo', method_opts=None, loader_opts=None, bernoulli=False):
@@ -90,7 +92,7 @@ class Task2Vec:
         self.loss_fn = nn.CrossEntropyLoss() if not self.bernoulli else nn.BCEWithLogitsLoss()
         self.loss_fn = self.loss_fn.to(self.device)
 
-    def embed(self, dataset: Dataset, create_final_embedding: bool = False):
+    def embed(self, dataset: Dataset, create_final_embedding: bool = True):
         # Cache the last layer features (needed to train the classifier) and (if needed) the intermediate layer features
         # so that we can skip the initial layers when computing the embedding
         if self.skip_layers > 0:

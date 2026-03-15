@@ -5,7 +5,7 @@ setup(
     version="0.1.0",
     author="...",
     description="...",
-    long_description=open("README.rst").read(),
+    #long_description=open("README.rst").read(),
     long_description_content_type="text/x-rst",
     url="https://github.com/intsystems/DataMetaMap",
     packages=find_packages(where="src"),

@@ -7,8 +7,7 @@ from sklearn.manifold import MDS
 import ot  # POT: Python Optimal Transport
 from tqdm.autonotebook import tqdm
 
-from .BaseEmbedder import BaseEmbedder
-
+from data_meta_map.base_embedder import BaseEmbedder
 
 
 def sqrtm_newton_schulz(A: torch.Tensor, num_iters: int = 20) -> torch.Tensor:
@@ -105,7 +104,8 @@ class WassersteinEmbedder(BaseEmbedder):
         gaussian_assumption: bool = True,
         diagonal_cov: bool = False,
         commute: bool = False,
-        sqrt_method: str = "ns",  # 'ns' = Newton-Schulz (default), 'eig' = eigenvalue decomposition
+        # 'ns' = Newton-Schulz (default), 'eig' = eigenvalue decomposition
+        sqrt_method: str = "ns",
         sqrt_niters: int = 20,
         **kwargs
     ):
@@ -133,7 +133,8 @@ class WassersteinEmbedder(BaseEmbedder):
         self.sqrt_niters = sqrt_niters
 
         # Cache for class statistics: {dataset_id: (means, covs, class_offsets)}
-        self._stats_cache: Dict[int, Tuple[torch.Tensor, torch.Tensor, List[int]]] = {}
+        self._stats_cache: Dict[int,
+                                Tuple[torch.Tensor, torch.Tensor, List[int]]] = {}
         # Cache for preprocessed data: {dataset_id: (X, Y)}
         self._data_cache: Dict[int, Tuple[torch.Tensor, torch.Tensor]] = {}
 
@@ -171,9 +172,11 @@ class WassersteinEmbedder(BaseEmbedder):
                 idxs = np.sort(np.random.choice(
                     len(data), self.max_samples, replace=False))
                 sampler = SubsetRandomSampler(idxs)
-                loader = DataLoader(data, sampler=sampler, batch_size=self.batch_size)
+                loader = DataLoader(data, sampler=sampler,
+                                    batch_size=self.batch_size)
             else:
-                loader = DataLoader(data, batch_size=self.batch_size, shuffle=False)
+                loader = DataLoader(
+                    data, batch_size=self.batch_size, shuffle=False)
         elif isinstance(data, DataLoader):
             loader = data
         else:
@@ -231,7 +234,8 @@ class WassersteinEmbedder(BaseEmbedder):
         if self.diagonal_cov:
             covs = torch.zeros((num_classes, feature_dim), device=self.device)
         else:
-            covs = torch.zeros((num_classes, feature_dim, feature_dim), device=self.device)
+            covs = torch.zeros(
+                (num_classes, feature_dim, feature_dim), device=self.device)
 
         for idx, label in enumerate(unique_labels):
             mask = (Y == label)
@@ -251,7 +255,8 @@ class WassersteinEmbedder(BaseEmbedder):
                 if self.diagonal_cov:
                     covs[idx] = torch.zeros(feature_dim, device=self.device)
                 else:
-                    covs[idx] = torch.zeros((feature_dim, feature_dim), device=self.device)
+                    covs[idx] = torch.zeros(
+                        (feature_dim, feature_dim), device=self.device)
 
         # Global class indices
         class_offsets = list(range(num_classes))
@@ -378,11 +383,14 @@ class WassersteinEmbedder(BaseEmbedder):
                                 means_j[idx_j], covs_j[idx_j]
                             )
                         else:
-                            X_i, Y_i = self._data_cache.get(i, self.preprocess_dataset(datasets[i], dataset_id=i))
-                            X_j, Y_j = self._data_cache.get(j, self.preprocess_dataset(datasets[j], dataset_id=j))
+                            X_i, Y_i = self._data_cache.get(
+                                i, self.preprocess_dataset(datasets[i], dataset_id=i))
+                            X_j, Y_j = self._data_cache.get(
+                                j, self.preprocess_dataset(datasets[j], dataset_id=j))
                             samples_i = X_i[Y_i == local_i]
                             samples_j = X_j[Y_j == local_j]
-                            d = self._exact_wasserstein_distance(samples_i, samples_j)
+                            d = self._exact_wasserstein_distance(
+                                samples_i, samples_j)
                             d = torch.tensor(d, device=self.device)
 
                         D[global_i, global_j] = d
@@ -446,7 +454,8 @@ class WassersteinEmbedder(BaseEmbedder):
         X, Y = self.preprocess_dataset(data, dataset_id=dataset_idx)
 
         start_offset = class_offsets[dataset_idx]
-        end_offset = class_offsets[dataset_idx + 1] if dataset_idx + 1 < len(class_offsets) else label_embeddings.shape[0]
+        end_offset = class_offsets[dataset_idx + 1] if dataset_idx + \
+            1 < len(class_offsets) else label_embeddings.shape[0]
         label_emb_for_dataset = label_embeddings[start_offset:end_offset]
 
         label_indices = Y.long()
@@ -485,7 +494,8 @@ class WassersteinEmbedder(BaseEmbedder):
 
         augmented_datasets: List[torch.Tensor] = []
         for idx, dataset in enumerate(datasets):
-            Z = self.augment_features(dataset, label_embeddings, idx, class_offsets)
+            Z = self.augment_features(
+                dataset, label_embeddings, idx, class_offsets)
             augmented_datasets.append(Z)
 
         if reference is None and create_reference:
@@ -494,15 +504,18 @@ class WassersteinEmbedder(BaseEmbedder):
             ref_indices = torch.randperm(all_data.shape[0])[:ref_size]
             reference = all_data[ref_indices].float()
         elif reference is None:
-            raise ValueError("Either provide 'reference' or set 'create_reference=True'")
+            raise ValueError(
+                "Either provide 'reference' or set 'create_reference=True'")
 
         task_embeddings = []
         ref_size = reference.shape[0]
 
         for Z in augmented_datasets:
             Z = Z.float()
-            C = ot.dist(Z.cpu().numpy(), reference.cpu().numpy(), metric='euclidean')
-            gamma = ot.emd(ot.unif(Z.shape[0]), ot.unif(ref_size), C, numItermax=1_000_000)
+            C = ot.dist(Z.cpu().numpy(), reference.cpu().numpy(),
+                        metric='euclidean')
+            gamma = ot.emd(ot.unif(Z.shape[0]), ot.unif(
+                ref_size), C, numItermax=1_000_000)
             gamma = torch.from_numpy(gamma).float().to(self.device)
             f = (ref_size * gamma.T @ Z - reference) / np.sqrt(ref_size)
             task_embeddings.append(f)

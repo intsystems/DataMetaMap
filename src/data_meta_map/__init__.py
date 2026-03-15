@@ -1,9 +1,8 @@
-from .BaseEmbedder import BaseEmbedder
-from .WassersteinEmbedder import WassersteinEmbedder
-
+from data_meta_map.base_embedder import BaseEmbedder
+from data_meta_map.wasserstein_embedder import WassersteinEmbedder
 
 
 __all__ = [
-    "BaseEmbedder",
-    "WassersteinEmbedder"
+    "baseEmbedder",
+    "wasserstein_embedder"
 ]

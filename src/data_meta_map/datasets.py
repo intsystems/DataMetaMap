@@ -341,7 +341,7 @@ def kmnist(root):
         transforms.Resize(224),
         transforms.ToTensor(),
     ])
-    trainset = KMNIST(root, train=True, transform=transform, download=True)
+    trainset = KMNIST(root, train=True, transform=transform, download=False)
     testset = KMNIST(root, train=False, transform=transform)
     return trainset, testset
 

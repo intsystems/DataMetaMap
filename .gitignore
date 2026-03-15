@@ -121,4 +121,9 @@ logs/
 *.csv
 !.dvc
 data
+logs
+pretrain_embeddings
 wget-log
+checkpoints
+*.parquet
+*.pt

@@ -4,8 +4,8 @@ from torch.utils.data import Dataset, DataLoader
 import sys
 import traceback
 
-from data_meta_map.BaseEmbedder import BaseEmbedder
-from data_meta_map.WassersteinEmbedder import WassersteinEmbedder
+from data_meta_map.baseEmbedder import BaseEmbedder
+from data_meta_map.wasserstein_embedder import WassersteinEmbedder
 
 
 # ============================================================================
@@ -14,6 +14,7 @@ from data_meta_map.WassersteinEmbedder import WassersteinEmbedder
 
 class MockDataset(Dataset):
     """Простой датасет для тестов."""
+
     def __init__(self, num_samples=100, feature_dim=10, num_classes=5, seed=42):
         torch.manual_seed(seed)
         self.data = torch.randn(num_samples, feature_dim)
@@ -28,6 +29,7 @@ class MockDataset(Dataset):
 
 class MockVectorizedDataset(Dataset):
     """Датасет с уже векторизованными данными (как текстовые эмбеддинги)."""
+
     def __init__(self, num_samples=100, feature_dim=768, num_classes=3, seed=42):
         torch.manual_seed(seed)
         self.data = torch.randn(num_samples, feature_dim)
@@ -46,6 +48,7 @@ class MockVectorizedDataset(Dataset):
 
 class ConcreteEmbedder(BaseEmbedder):
     """Конкретная реализация для тестирования абстрактного класса."""
+
     def preprocess_dataset(self, data, dataset_id=None):
         if isinstance(data, Dataset):
             X = torch.randn(100, 10)
@@ -54,7 +57,8 @@ class ConcreteEmbedder(BaseEmbedder):
         return data
 
     def compute_pairwise_distances(self, datasets, symmetric=True):
-        n = sum(len(torch.unique(self.preprocess_dataset(d)[1])) for d in datasets)
+        n = sum(
+            len(torch.unique(self.preprocess_dataset(d)[1])) for d in datasets)
         return torch.zeros((n, n), device=self.device)
 
     def embed_distance_matrix(self, distance_matrix, emb_dim=None):
@@ -64,7 +68,8 @@ class ConcreteEmbedder(BaseEmbedder):
 
     def augment_features(self, data, label_embeddings, dataset_idx, class_offsets):
         X, Y = self.preprocess_dataset(data)
-        label_emb = label_embeddings[class_offsets[dataset_idx]:class_offsets[dataset_idx+1]]
+        label_emb = label_embeddings[class_offsets[dataset_idx]
+            :class_offsets[dataset_idx+1]]
         return torch.cat([X, label_emb[Y]], dim=1)
 
 
@@ -254,7 +259,8 @@ def test_wasserstein_preprocess_vectorized():
     print("\n[TEST] WassersteinEmbedder preprocess vectorized data")
     try:
         embedder = WassersteinEmbedder(emb_dim=2)
-        dataset = MockVectorizedDataset(num_samples=100, feature_dim=768, num_classes=5)
+        dataset = MockVectorizedDataset(
+            num_samples=100, feature_dim=768, num_classes=5)
 
         X, Y = embedder.preprocess_dataset(dataset, dataset_id=2)
 
@@ -320,7 +326,8 @@ def test_wasserstein_bures_distance_identical():
         mean2 = torch.tensor([0.0, 0.0])
         cov2 = torch.eye(2)
 
-        distance = embedder._bures_wasserstein_distance(mean1, cov1, mean2, cov2)
+        distance = embedder._bures_wasserstein_distance(
+            mean1, cov1, mean2, cov2)
 
         assert torch.allclose(distance, torch.tensor(0.0), atol=1e-2)
         print("  ✓ Расстояние Бюра для идентичных распределений = 0")
@@ -341,7 +348,8 @@ def test_wasserstein_bures_distance_different_means():
         mean2 = torch.tensor([1.0, 0.0])
         cov2 = torch.eye(2)
 
-        distance = embedder._bures_wasserstein_distance(mean1, cov1, mean2, cov2)
+        distance = embedder._bures_wasserstein_distance(
+            mean1, cov1, mean2, cov2)
 
         assert distance > 0.0
         assert torch.allclose(distance, torch.tensor(1.0), atol=1e-5)
@@ -379,8 +387,10 @@ def test_wasserstein_pairwise_distances_multiple():
     print("\n[TEST] WassersteinEmbedder compute_pairwise_distances multiple datasets")
     try:
         embedder = WassersteinEmbedder(emb_dim=2, max_samples=20)
-        ds1 = MockDataset(num_samples=30, feature_dim=10, num_classes=2, seed=42)
-        ds2 = MockDataset(num_samples=30, feature_dim=10, num_classes=3, seed=43)
+        ds1 = MockDataset(num_samples=30, feature_dim=10,
+                          num_classes=2, seed=42)
+        ds2 = MockDataset(num_samples=30, feature_dim=10,
+                          num_classes=3, seed=43)
 
         D = embedder.compute_pairwise_distances([ds1, ds2], symmetric=True)
 
@@ -424,7 +434,8 @@ def test_wasserstein_augment_features():
         label_embeddings = torch.randn(3, 3)
         class_offsets = [0, 3]
 
-        Z = embedder.augment_features(dataset, label_embeddings, 0, class_offsets)
+        Z = embedder.augment_features(
+            dataset, label_embeddings, 0, class_offsets)
 
         assert Z.shape == (50, 13)  # 10 features + 3 label embeddings
         print("  ✓ Аугментация признаков работает корректно")
