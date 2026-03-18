@@ -2,7 +2,7 @@ import io
 import re
 from setuptools import setup, find_packages
 
-from mylib import __version__
+from DataMetaMap import __version__
 
 def read(file_path):
     with io.open(file_path, 'r', encoding='utf-8') as f:

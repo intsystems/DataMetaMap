@@ -1,4 +1,4 @@
-from mylib.train import cv_parameters, Trainer, SyntheticBernuliDataset
+from DataMetaMap.train import cv_parameters, Trainer, SyntheticBernuliDataset
 from sklearn.linear_model import LogisticRegression
 
 def test_sample():
