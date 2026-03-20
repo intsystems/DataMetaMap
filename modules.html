@@ -1,116 +1,153 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>relaxit &mdash; Just Relax It 2.0  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/relaxit.css?v=483648fb" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modules — DataMetaMap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root { --sidebar-width: 260px; --sidebar-bg: #343131; --accent: #2980b9; }
+    body { margin: 0; font-family: "Lato", "Helvetica Neue", Arial, sans-serif; font-size: 15px; color: #333; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #1a5a8a; text-decoration: underline; }
+    .wy-nav-side {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--sidebar-bg);
+      overflow-y: auto; z-index: 200;
+    }
+    .wy-side-nav-search { background: #2c2c2c; padding: 18px 16px 14px; text-align: center; }
+    .wy-side-nav-search img { max-width: 170px; margin-bottom: 8px; }
+    .wy-side-nav-search .proj { color: #fff; font-size: 1.05rem; font-weight: 700; }
+    .wy-menu { padding: 10px 0; }
+    .wy-menu .caption {
+      color: #aaa; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; padding: 14px 16px 4px;
+    }
+    .wy-menu a { display: block; padding: 7px 16px 7px 24px; color: #d9d9d9; font-size: 0.88rem; }
+    .wy-menu a:hover { color: #fff; background: #4a4a4a; text-decoration: none; }
+    .wy-menu a.active { color: #fff; background: #4a4a4a; font-weight: 600; }
+    .wy-nav-content-wrap { margin-left: var(--sidebar-width); min-height: 100vh; }
+    .wy-nav-content { padding: 28px 40px 60px; max-width: 920px; }
+    .wy-nav-top {
+      display: none; background: var(--sidebar-bg);
+      padding: 10px 16px; color: #fff; font-weight: 700; font-size: 1rem;
+      align-items: center; justify-content: space-between;
+    }
+    .wy-nav-top button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+    .breadcrumbs { list-style: none; padding: 0 0 12px; margin: 0; display: flex; align-items: center; gap: 6px; color: #999; font-size: 0.85rem; }
+    .breadcrumbs li + li::before { content: "»"; }
+    .breadcrumbs a { color: #999; }
+    .breadcrumbs-aside { margin-left: auto; font-size: 0.82rem; }
+    .breadcrumbs-aside a { color: #999; }
+    h1 { font-size: 1.9rem; font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 18px; }
+    h2 { font-size: 1.35rem; font-weight: 700; margin-top: 28px; margin-bottom: 10px; }
+    .module-row { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+    .module-item { border: 1px solid #e0e0ee; border-radius: 4px; padding: 12px 16px; }
+    .module-item code { font-size: 0.92rem; font-weight: 700; }
+    .module-item p { font-size: 0.87rem; color: #555; margin: 4px 0 0; }
+    code:not([class]) { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; }
+    .rst-footer { border-top: 1px solid #eee; padding-top: 18px; margin-top: 36px; color: #888; font-size: 0.82rem; }
+    .footer-nav { display: flex; justify-content: space-between; margin-bottom: 14px; }
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.85rem; color: #555; transition: background .15s;
+    }
+    .btn-nav:hover { background: #f5f5f5; color: #333; text-decoration: none; }
+    @media (max-width: 768px) {
+      .wy-nav-side { transform: translateX(-100%); transition: transform .3s; }
+      .wy-nav-side.open { transform: translateX(0); }
+      .wy-nav-content-wrap { margin-left: 0; }
+      .wy-nav-top { display: flex; }
+      .wy-nav-content { padding: 20px 16px 40px; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  <div class="wy-nav-top">
+    <button onclick="document.querySelector('.wy-nav-side').classList.toggle('open')"><i class="fa fa-bars"></i></button>
+    <span>DataMetaMap</span>
+  </div>
 
-          
-          
-          <a href="index.html">
-            
-              <img src="_static/logo-small.png" class="logo" alt="Logo"/>
+  <nav class="wy-nav-side">
+    <div class="wy-side-nav-search">
+      <a href="index.html">
+        <img src="https://raw.githubusercontent.com/intsystems/DataMetaMap/master/assets/logo_full.jpg" alt="DataMetaMap" onerror="this.style.display='none'" />
+        <div class="proj">DataMetaMap</div>
+      </a>
+    </div>
+    <div class="wy-menu">
+      <p class="caption">Guidelines</p>
+      <a href="install.html">Install</a>
+      <a href="quickstart.html">Quickstart</a>
+      <p class="caption">Code</p>
+      <a href="datametamap.html">data_meta_map</a>
+    </div>
+  </nav>
+
+  <section class="wy-nav-content-wrap">
+    <div class="wy-nav-content">
+
+      <ul class="breadcrumbs">
+        <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+        <li>Modules</li>
+        <li class="breadcrumbs-aside">
+          <a href="https://github.com/intsystems/DataMetaMap/tree/develop/src/data_meta_map" target="_blank">
+            <i class="fab fa-github"></i> Source on GitHub
           </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Guidelines</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Code</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="relaxit.distributions.html">relaxit.distributions</a></li>
-</ul>
+        </li>
+      </ul>
+      <hr />
 
+      <h1>data_meta_map</h1>
+      <p>Module overview for the <code>data_meta_map</code> package.</p>
+
+      <h2>Top-level modules</h2>
+      <div class="module-row">
+        <div class="module-item">
+          <code><a href="datametamap.html#base-embedder">data_meta_map.base_embedder</a></code>
+          <p>Abstract base class <code>BaseEmbedder</code> and the <code>SupportsGetItem</code> protocol.</p>
+        </div>
+        <div class="module-item">
+          <code><a href="datametamap.html#wasserstein-embedder">data_meta_map.wasserstein_embedder</a></code>
+          <p>
+            <code>WassersteinEmbedder</code> — Optimal Transport-based embedder using
+            Bures-Wasserstein or exact EMD distances.
+          </p>
+        </div>
+        <div class="module-item">
+          <code>data_meta_map.datasets</code>
+          <p>Dataset loaders and helpers for CIFAR-10, CIFAR-100, MNIST, STL-10, iNat, and more.</p>
+        </div>
+        <div class="module-item">
+          <code>data_meta_map.models</code>
+          <p>Backbone model definitions used as probe networks.</p>
         </div>
       </div>
-    </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Just Relax It 2.0</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">relaxit</li>
-      <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/Intelligent-Systems-Phystech/relaxit/blob/main./doc/modules.rst" class="fa fa-github"> Edit on GitHub</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="relaxit">
-<h1>relaxit<a class="headerlink" href="#relaxit" title="Link to this heading"></a></h1>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="relaxit.html">relaxit</a></li>
-</ul>
-</div>
-</section>
-
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025, Daniil Dorin, Igor Ignashin, Nikita Kiselev, Andrey Veprikov, Ivan Papay, Vladislav Meshkov, Ilia Stepanov, Vladislav Minashkin.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
+      <h2>Subpackages</h2>
+      <div class="module-row">
+        <div class="module-item">
+          <code><a href="datametamap.html#task2vec">data_meta_map.task2vec</a></code>
+          <p>
+            Task2Vec implementation: <code>Task2Vec</code>, <code>ProbeNetwork</code>,
+            <code>Embedding</code>, similarity utilities, and variational inference tools.
+          </p>
         </div>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+
+      <div class="rst-footer">
+        <div class="footer-nav">
+          <a href="index.html" class="btn-nav"><i class="fa fa-home"></i> Home</a>
+          <a href="datametamap.html" class="btn-nav">API Reference <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+        <p>&copy; 2025 Vladislav Minashkin, Ivan Papay, Vladislav Meshkov, Ilya Stepanov.</p>
+      </div>
+
+    </div>
+  </section>
 
 </body>
 </html>

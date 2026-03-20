@@ -1,118 +1,512 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>data_meta_map API — DataMetaMap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+  <style>
+    :root { --sidebar-width: 260px; --sidebar-bg: #343131; --accent: #2980b9; }
+    body { margin: 0; font-family: "Lato", "Helvetica Neue", Arial, sans-serif; font-size: 15px; color: #333; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #1a5a8a; text-decoration: underline; }
+    .wy-nav-side {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--sidebar-bg);
+      overflow-y: auto; z-index: 200;
+    }
+    .wy-side-nav-search { background: #2c2c2c; padding: 18px 16px 14px; text-align: center; }
+    .wy-side-nav-search img { max-width: 170px; margin-bottom: 8px; }
+    .wy-side-nav-search .proj { color: #fff; font-size: 1.05rem; font-weight: 700; }
+    .wy-menu { padding: 10px 0; }
+    .wy-menu .caption {
+      color: #aaa; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; padding: 14px 16px 4px;
+    }
+    .wy-menu a { display: block; padding: 7px 16px 7px 24px; color: #d9d9d9; font-size: 0.88rem; }
+    .wy-menu a:hover { color: #fff; background: #4a4a4a; text-decoration: none; }
+    .wy-menu a.active { color: #fff; background: #4a4a4a; font-weight: 600; }
+    .wy-menu a.sub { padding-left: 36px; font-size: 0.83rem; }
+    .wy-nav-content-wrap { margin-left: var(--sidebar-width); min-height: 100vh; }
+    .wy-nav-content { padding: 28px 40px 60px; max-width: 960px; }
+    .wy-nav-top {
+      display: none; background: var(--sidebar-bg);
+      padding: 10px 16px; color: #fff; font-weight: 700; font-size: 1rem;
+      align-items: center; justify-content: space-between;
+    }
+    .wy-nav-top button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+    .breadcrumbs { list-style: none; padding: 0 0 12px; margin: 0; display: flex; align-items: center; gap: 6px; color: #999; font-size: 0.85rem; }
+    .breadcrumbs li + li::before { content: "»"; }
+    .breadcrumbs a { color: #999; }
+    .breadcrumbs a:hover { color: var(--accent); }
+    .breadcrumbs-aside { margin-left: auto; font-size: 0.82rem; }
+    .breadcrumbs-aside a { color: #999; }
+    h1 { font-size: 1.9rem; font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 18px; }
+    h2 { font-size: 1.35rem; font-weight: 700; margin-top: 32px; margin-bottom: 8px; border-bottom: 1px solid #f0f0f0; padding-bottom: 6px; }
+    h3 { font-size: 1.05rem; font-weight: 700; margin-top: 20px; margin-bottom: 6px; }
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>relaxit &mdash; DataMetaMap  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/datametamap.css?v=483648fb" />
+    /* ===== API SIGNATURE BOX ===== */
+    .sig-box {
+      background: #f0f4f8; border: 1px solid #cdd9e5;
+      border-radius: 4px; padding: 10px 14px; margin: 12px 0 6px;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 0.88rem; word-break: break-all;
+    }
+    .sig-box .sig-name { font-weight: 700; color: #0d47a1; }
+    .sig-box .sig-kw { color: #5c35cc; }
+    .sig-box .sig-type { color: #c75000; font-style: italic; }
+    .sig-box .sig-default { color: #888; }
 
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    /* ===== PARAM TABLE ===== */
+    .param-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 10px 0 18px; }
+    .param-table th { background: #f5f5f5; padding: 7px 10px; text-align: left; font-weight: 700; border-bottom: 2px solid #ddd; }
+    .param-table td { padding: 6px 10px; border-bottom: 1px solid #eee; vertical-align: top; }
+    .param-table td:first-child { font-family: monospace; color: #2c3e50; white-space: nowrap; }
+    .param-table td:nth-child(2) { color: #888; font-style: italic; }
+    .param-table td code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; }
+
+    /* ===== SOURCE LINK ===== */
+    .src-link { float: right; font-size: 0.78rem; color: #aaa; font-weight: normal; }
+    .src-link a { color: #aaa; }
+    .src-link a:hover { color: var(--accent); }
+
+    /* ===== METHOD/ATTR ===== */
+    .method-section { border-left: 3px solid #e0e8f0; padding-left: 14px; margin: 16px 0; }
+
+    pre { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 4px; padding: 14px; overflow-x: auto; margin: 12px 0; }
+    code:not([class]) { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; }
+
+    .tag {
+      display: inline-block; padding: 2px 7px; border-radius: 3px;
+      font-size: 0.75rem; font-weight: 700; margin-right: 4px;
+    }
+    .tag-abstract { background: #fff3cd; color: #856404; }
+    .tag-deprecated { background: #f8d7da; color: #721c24; }
+    .tag-cached { background: #d4edda; color: #155724; }
+
+    .module-toc { background: #f9f9fb; border: 1px solid #e0e0ee; border-radius: 4px; padding: 12px 18px; margin: 14px 0 24px; }
+    .module-toc ul { margin: 0; padding-left: 18px; }
+    .module-toc li { margin: 3px 0; font-size: 0.88rem; }
+
+    .rst-footer { border-top: 1px solid #eee; padding-top: 18px; margin-top: 36px; color: #888; font-size: 0.82rem; }
+    .footer-nav { display: flex; justify-content: space-between; margin-bottom: 14px; }
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.85rem; color: #555; transition: background .15s;
+    }
+    .btn-nav:hover { background: #f5f5f5; color: #333; text-decoration: none; }
+    @media (max-width: 768px) {
+      .wy-nav-side { transform: translateX(-100%); transition: transform .3s; }
+      .wy-nav-side.open { transform: translateX(0); }
+      .wy-nav-content-wrap { margin-left: 0; }
+      .wy-nav-top { display: flex; }
+      .wy-nav-content { padding: 20px 16px 40px; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  <div class="wy-nav-top">
+    <button onclick="document.querySelector('.wy-nav-side').classList.toggle('open')"><i class="fa fa-bars"></i></button>
+    <span>DataMetaMap</span>
+  </div>
 
-          
-          
-          <a href="index.html">
-            
-              <img src="_static/logo.jpg" class="logo" alt="Logo"/>
+  <nav class="wy-nav-side">
+    <div class="wy-side-nav-search">
+      <a href="index.html">
+        <img src="https://raw.githubusercontent.com/intsystems/DataMetaMap/master/assets/logo_full.jpg" alt="DataMetaMap" onerror="this.style.display='none'" />
+        <div class="proj">DataMetaMap</div>
+      </a>
+    </div>
+    <div class="wy-menu">
+      <p class="caption">Guidelines</p>
+      <a href="install.html">Install</a>
+      <a href="quickstart.html">Quickstart</a>
+      <p class="caption">Code</p>
+      <a href="datametamap.html" class="active">data_meta_map</a>
+      <a href="datametamap.html#base-embedder" class="sub">BaseEmbedder</a>
+      <a href="datametamap.html#wasserstein-embedder" class="sub">WassersteinEmbedder</a>
+      <a href="datametamap.html#task2vec" class="sub">Task2Vec</a>
+    </div>
+  </nav>
+
+  <section class="wy-nav-content-wrap">
+    <div class="wy-nav-content">
+
+      <ul class="breadcrumbs">
+        <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+        <li>data_meta_map</li>
+        <li class="breadcrumbs-aside">
+          <a href="https://github.com/intsystems/DataMetaMap/tree/develop/src/data_meta_map" target="_blank">
+            <i class="fab fa-github"></i> Source on GitHub
           </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Guidelines</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Code</span></p>
+        </li>
+      </ul>
+      <hr />
 
+      <h1>data_meta_map</h1>
 
-        </div>
+      <p>
+        The <code>data_meta_map</code> package provides tools for embedding datasets into a shared
+        vector space via multiple algorithms. The main entry points are
+        <a href="#wasserstein-embedder">WassersteinEmbedder</a> and
+        <a href="#task2vec">Task2Vec</a>, both inheriting from the abstract
+        <a href="#base-embedder">BaseEmbedder</a>.
+      </p>
+
+      <div class="module-toc">
+        <strong>Contents</strong>
+        <ul>
+          <li><a href="#base-embedder">data_meta_map.base_embedder.BaseEmbedder</a></li>
+          <li><a href="#wasserstein-embedder">data_meta_map.wasserstein_embedder.WassersteinEmbedder</a></li>
+          <li><a href="#task2vec">data_meta_map.task2vec.Task2Vec</a></li>
+          <li><a href="#helpers">Helper functions</a></li>
+        </ul>
       </div>
-    </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">DataMetaMap</a>
-      </nav>
+      <!-- ==================== BaseEmbedder ==================== -->
+      <h2 id="base-embedder">
+        data_meta_map.base_embedder
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/base_embedder.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
 
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">DataMetaMap</li>
-      <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/Intelligent-Systems-Phystech/DataMetaMap/blob/main./doc/datametamap.rst" class="fa fa-github"> Edit on GitHub</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="datametamap">
-<h1>datametamap<a class="headerlink" href="#datametamap" title="Link to this heading"></a></h1>
-<section id="subpackages">
-<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
-<div class="toctree-wrapper compound">
-
-</div>
-</section>
-<section id="module-datametamap">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-datametamap" title="Link to this heading"></a></h2>
-</section>
-</section>
-
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2026, Ivan Papay, Vladislav Meshkov, Ilia Stepanov, Vladislav Minashkin.</p>
-  </div>
-
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
-
-</footer>
-        </div>
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.base_embedder.BaseEmbedder</span>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
 
+      <p>
+        Abstract base class for all dataset embedders.
+        All concrete embedder classes must inherit from <code>BaseEmbedder</code> and
+        implement the <code>embed</code> method.
+      </p>
+
+      <div class="method-section">
+        <h3>
+          <span class="tag tag-abstract">abstractmethod</span>
+          <code>embed(*args, **kwargs)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/base_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          Override in subclass to produce embeddings for a given dataset.
+          Raises <code>NotImplementedError</code> if called directly.
+        </p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>get_class_statistics(X, Y)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/base_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>Compute per-class mean and covariance from feature and label tensors.</p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr>
+            <td>X</td>
+            <td>Tensor [N, D]</td>
+            <td>Feature matrix.</td>
+          </tr>
+          <tr>
+            <td>Y</td>
+            <td>Tensor [N], long</td>
+            <td>Integer class labels.</td>
+          </tr>
+        </table>
+        <p><strong>Returns:</strong> <code>(means, covs)</code> — tensors of shape
+          <code>[C, D]</code> and <code>[C, D, D]</code> where <em>C</em> = number of classes.</p>
+      </div>
+
+      <!-- ==================== WassersteinEmbedder ==================== -->
+      <h2 id="wasserstein-embedder">
+        data_meta_map.wasserstein_embedder
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.wasserstein_embedder.WassersteinEmbedder</span>(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;emb_dim: <span class="sig-type">int</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;device: <span class="sig-type">str | torch.device</span> <span class="sig-default">= "cpu"</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;max_samples: <span class="sig-type">int | None</span> <span class="sig-default">= None</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;batch_size: <span class="sig-type">int</span> <span class="sig-default">= 64</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;gaussian_assumption: <span class="sig-type">bool</span> <span class="sig-default">= True</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;diagonal_cov: <span class="sig-type">bool</span> <span class="sig-default">= False</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;sqrt_method: <span class="sig-type">str</span> <span class="sig-default">= "ns"</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;sqrt_niters: <span class="sig-type">int</span> <span class="sig-default">= 20</span>,<br />
+        )
+      </div>
+
+      <p>
+        Dataset embedder based on <strong>Wasserstein distance (Optimal Transport)</strong>.
+        Supports two distance modes:
+      </p>
+      <ul>
+        <li>
+          <strong>Gaussian approximation</strong> (<code>gaussian_assumption=True</code>) —
+          Bures-Wasserstein distance. Fast: O(d³) per pair.
+          Based on <a href="https://github.com/microsoft/otdd" target="_blank">OTDD (Microsoft Research)</a>.
+        </li>
+        <li>
+          <strong>Exact OT via EMD</strong> (<code>gaussian_assumption=False</code>) —
+          distribution-free but slow: O(n³ log n).
+        </li>
+      </ul>
+      <p>Class-level embeddings are produced via
+        <a href="https://scikit-learn.org/stable/modules/generated/sklearn.manifold.MDS.html" target="_blank">
+        Multidimensional Scaling (MDS)</a>.</p>
+
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>emb_dim</td><td>int</td><td>Target dimensionality of label embeddings.</td></tr>
+        <tr><td>device</td><td>str | torch.device</td><td>Computation device (<code>"cpu"</code> or <code>"cuda"</code>).</td></tr>
+        <tr><td>max_samples</td><td>int | None</td><td>Maximum samples to load per dataset. <code>None</code> = all.</td></tr>
+        <tr><td>batch_size</td><td>int</td><td>Batch size for DataLoader creation.</td></tr>
+        <tr><td>gaussian_assumption</td><td>bool</td><td>If <code>True</code>, use Gaussian (Bures) approximation; else exact EMD.</td></tr>
+        <tr><td>diagonal_cov</td><td>bool</td><td>Use only diagonal of covariance (faster on high-dim data).</td></tr>
+        <tr><td>sqrt_method</td><td>str</td><td>Matrix square root method: <code>"ns"</code> (Newton-Schulz) or <code>"eig"</code>.</td></tr>
+        <tr><td>sqrt_niters</td><td>int</td><td>Iterations for Newton-Schulz matrix square root.</td></tr>
+      </table>
+
+      <h3>Methods</h3>
+
+      <div class="method-section">
+        <h3>
+          <code>compute_wte(datasets, reference=None, create_reference=True)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          Main method. Computes <strong>Wasserstein Transport Embeddings</strong> for a collection of datasets.
+          Pipeline: pairwise distances → MDS label embeddings → feature augmentation → transport to reference.
+        </p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>datasets</td><td>List[Dataset | DataLoader]</td><td>Datasets to embed.</td></tr>
+          <tr><td>reference</td><td>Tensor | None</td><td>Optional reference distribution.</td></tr>
+          <tr><td>create_reference</td><td>bool</td><td>If <code>True</code> and reference is <code>None</code>, builds reference from merged data.</td></tr>
+        </table>
+        <p><strong>Returns:</strong> <code>(task_embeddings, label_embeddings, augmented_datasets)</code></p>
+        <ul>
+          <li><code>task_embeddings</code>: <code>[num_datasets, ref_size, feature_dim + emb_dim]</code></li>
+          <li><code>label_embeddings</code>: <code>[total_classes, emb_dim]</code></li>
+          <li><code>augmented_datasets</code>: list of <code>[num_samples, feature_dim + emb_dim]</code></li>
+        </ul>
+<pre><code class="language-python">embedder = WassersteinEmbedder(emb_dim=32, device="cpu", max_samples=1000)
+task_embs, label_embs, augmented = embedder.compute_wte([cifar10, mnist])
+</code></pre>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>compute_pairwise_distances(datasets, symmetric=True)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          Compute a <code>[total_classes × total_classes]</code> pairwise distance matrix
+          between all classes across all datasets.
+          Global class indices are contiguous: dataset 0 occupies <code>[0 … k₀-1]</code>,
+          dataset 1 occupies <code>[k₀ … k₀+k₁-1]</code>, and so on.
+        </p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>datasets</td><td>List[Dataset | DataLoader]</td><td>Input datasets.</td></tr>
+          <tr><td>symmetric</td><td>bool</td><td>Compute only upper triangle (saves ~50 % time).</td></tr>
+        </table>
+        <p><strong>Returns:</strong> Distance tensor <code>[total_classes, total_classes]</code>.</p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>preprocess_dataset(data, dataset_id=None)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          <span class="tag tag-cached">cached</span>
+          Load and flatten dataset into <code>(X, Y)</code> tensors.
+          Results are cached by <code>dataset_id</code> to avoid re-loading.
+        </p>
+        <p><strong>Returns:</strong>
+          <code>X: Tensor[N, D]</code>, <code>Y: Tensor[N]</code> (long).</p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>embed_distance_matrix(distance_matrix, emb_dim=None)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>Transform a precomputed distance matrix into low-dimensional embeddings via MDS.</p>
+        <p><strong>Returns:</strong> <code>Tensor[N, emb_dim]</code>.</p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>augment_features(data, label_embeddings, dataset_idx, class_offsets)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>Concatenate label embeddings to each sample's feature vector.</p>
+        <p><strong>Returns:</strong> <code>Z: Tensor[N, feature_dim + emb_dim]</code>.</p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>clear_cache()</code>
+        </h3>
+        <p>Clear internal data and statistics caches to free memory.</p>
+      </div>
+
+      <!-- ==================== Task2Vec ==================== -->
+      <h2 id="task2vec">
+        data_meta_map.task2vec
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.task2vec.task2vec.Task2Vec</span>(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;model: <span class="sig-type">ProbeNetwork</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;skip_layers: <span class="sig-type">int</span> <span class="sig-default">= 0</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;max_samples: <span class="sig-type">int | None</span> <span class="sig-default">= None</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;method: <span class="sig-type">str</span> <span class="sig-default">= "montecarlo"</span>,<br />
+        )
+      </div>
+
+      <p>
+        Task2Vec embeds a dataset as a vector by computing the
+        <strong>Fisher information matrix</strong> of a pre-trained probe network fine-tuned on the target task.
+        See <a href="https://arxiv.org/pdf/1902.03545" target="_blank">Achille et al., 2019</a>.
+      </p>
+
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>model</td><td>ProbeNetwork</td><td>Pre-trained network exposing a <code>.classifier</code> property.</td></tr>
+        <tr><td>skip_layers</td><td>int</td><td>Number of initial layers to skip when computing Fisher info.</td></tr>
+        <tr><td>max_samples</td><td>int | None</td><td>Maximum samples from dataset. <code>None</code> = all.</td></tr>
+        <tr><td>method</td><td>str</td><td><code>"montecarlo"</code> or <code>"variational"</code>.</td></tr>
+      </table>
+
+      <h3>Methods</h3>
+
+      <div class="method-section">
+        <h3>
+          <code>embed(dataset, create_final_embedding=False)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          Fine-tune the probe classifier on <code>dataset</code> and compute the Fisher information
+          matrix as the task embedding.
+        </p>
+        <p>
+          <strong>Returns:</strong> <code>Embedding</code> object with fields:
+        </p>
+        <ul>
+          <li><code>embedding.hessian</code> — numpy array, per-parameter Fisher diagonal.</li>
+          <li><code>embedding.scale</code> — numpy array, layer scales.</li>
+        </ul>
+<pre><code class="language-python">from data_meta_map.task2vec.task2vec import task2vec
+
+embedding = task2vec(probe_network, cifar10, max_samples=500)
+print(embedding.hessian.shape)  # (num_params,)
+</code></pre>
+      </div>
+
+      <!-- ==================== Helpers ==================== -->
+      <h2 id="helpers">
+        Helper functions
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/wasserstein_embedder.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="method-section">
+        <h3>
+          <code>sqrtm_newton_schulz(A, num_iters=20)</code>
+        </h3>
+        <p>
+          Matrix square root via Newton-Schulz iteration.
+          Adapted from <a href="https://github.com/microsoft/otdd" target="_blank">OTDD</a>.
+          Works on GPU without leaving PyTorch's compute graph.
+        </p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>A</td><td>Tensor [d, d]</td><td>Square positive semi-definite matrix.</td></tr>
+          <tr><td>num_iters</td><td>int</td><td>Number of Newton-Schulz iterations (default: 20).</td></tr>
+        </table>
+        <p><strong>Returns:</strong> <code>sqrtA: Tensor [d, d]</code></p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>compute_bures_term(cov1, cov2, sqrt_cov1=None, diagonal_cov=False, num_iters=20)</code>
+        </h3>
+        <p>
+          Compute the covariance term of the Bures-Wasserstein distance:
+        </p>
+        <p style="font-family: monospace; background: #f8f8f8; padding: 6px 10px; border-radius: 3px; font-size: 0.87rem;">
+          Tr(Σ₁ + Σ₂ − 2(Σ₁<sup>½</sup> Σ₂ Σ₁<sup>½</sup>)<sup>½</sup>)
+        </p>
+        <p><strong>Returns:</strong> scalar tensor.</p>
+      </div>
+
+      <div class="rst-footer">
+        <div class="footer-nav">
+          <a href="quickstart.html" class="btn-nav"><i class="fa fa-arrow-circle-left"></i> Quickstart</a>
+          <a href="index.html" class="btn-nav"><i class="fa fa-home"></i> Home</a>
+        </div>
+        <p>&copy; 2025 Vladislav Minashkin, Ivan Papay, Vladislav Meshkov, Ilya Stepanov.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
 </body>
 </html>

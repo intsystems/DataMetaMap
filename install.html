@@ -1,141 +1,161 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Install &mdash; Just Relax It 2.0  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/relaxit.css?v=483648fb" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Quickstart" href="quickstart.html" />
-    <link rel="prev" title="Just Relax It" href="index.html" /> 
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Install — DataMetaMap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+  <style>
+    :root { --sidebar-width: 260px; --sidebar-bg: #343131; --accent: #2980b9; }
+    body { margin: 0; font-family: "Lato", "Helvetica Neue", Arial, sans-serif; font-size: 15px; color: #333; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #1a5a8a; text-decoration: underline; }
+    .wy-nav-side {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--sidebar-bg);
+      overflow-y: auto; z-index: 200;
+    }
+    .wy-side-nav-search { background: #2c2c2c; padding: 18px 16px 14px; text-align: center; }
+    .wy-side-nav-search img { max-width: 170px; margin-bottom: 8px; }
+    .wy-side-nav-search .proj { color: #fff; font-size: 1.05rem; font-weight: 700; }
+    .wy-menu { padding: 10px 0; }
+    .wy-menu .caption {
+      color: #aaa; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; padding: 14px 16px 4px;
+    }
+    .wy-menu a { display: block; padding: 7px 16px 7px 24px; color: #d9d9d9; font-size: 0.88rem; }
+    .wy-menu a:hover { color: #fff; background: #4a4a4a; text-decoration: none; }
+    .wy-menu a.active { color: #fff; background: #4a4a4a; font-weight: 600; }
+    .wy-nav-content-wrap { margin-left: var(--sidebar-width); min-height: 100vh; }
+    .wy-nav-content { padding: 28px 40px 60px; max-width: 920px; }
+    .wy-nav-top {
+      display: none; background: var(--sidebar-bg);
+      padding: 10px 16px; color: #fff; font-weight: 700; font-size: 1rem;
+      align-items: center; justify-content: space-between;
+    }
+    .wy-nav-top button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+    .breadcrumbs { list-style: none; padding: 0 0 12px; margin: 0; display: flex; align-items: center; gap: 6px; color: #999; font-size: 0.85rem; }
+    .breadcrumbs li + li::before { content: "»"; }
+    .breadcrumbs a { color: #999; }
+    .breadcrumbs a:hover { color: var(--accent); }
+    .breadcrumbs-aside { margin-left: auto; font-size: 0.82rem; }
+    .breadcrumbs-aside a { color: #999; }
+    h1 { font-size: 1.9rem; font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 18px; }
+    h2 { font-size: 1.35rem; font-weight: 700; margin-top: 28px; margin-bottom: 12px; }
+    pre { background: #f8f8f8; border: 1px solid #e0e0e0; border-radius: 4px; padding: 14px; overflow-x: auto; margin: 14px 0; }
+    code:not([class]) { background: #f0f0f0; padding: 1px 5px; border-radius: 3px; font-size: 0.87em; }
+    .note {
+      background: #e7f3fb; border-left: 4px solid var(--accent);
+      padding: 10px 14px; border-radius: 0 4px 4px 0; margin: 14px 0;
+      font-size: 0.9rem;
+    }
+    .rst-footer { border-top: 1px solid #eee; padding-top: 18px; margin-top: 36px; color: #888; font-size: 0.82rem; }
+    .footer-nav { display: flex; justify-content: space-between; margin-bottom: 14px; }
+    .btn-nav {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 14px; border: 1px solid #ccc; border-radius: 4px;
+      font-size: 0.85rem; color: #555; transition: background .15s;
+    }
+    .btn-nav:hover { background: #f5f5f5; color: #333; text-decoration: none; }
+    @media (max-width: 768px) {
+      .wy-nav-side { transform: translateX(-100%); transition: transform .3s; }
+      .wy-nav-side.open { transform: translateX(0); }
+      .wy-nav-content-wrap { margin-left: 0; }
+      .wy-nav-top { display: flex; }
+      .wy-nav-content { padding: 20px 16px 40px; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+  <div class="wy-nav-top">
+    <button onclick="document.querySelector('.wy-nav-side').classList.toggle('open')"><i class="fa fa-bars"></i></button>
+    <span>DataMetaMap</span>
+  </div>
 
-          
-          
-          <a href="index.html">
-            
-              <img src="_static/logo-small.png" class="logo" alt="Logo"/>
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Guidelines</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Install</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#install-using-pip">Install using pip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-from-source">Install from source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#install-via-git-clone">Install via Git clone</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Code</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="relaxit.distributions.html">relaxit.distributions</a></li>
-</ul>
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Just Relax It 2.0</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Install</li>
-      <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/Intelligent-Systems-Phystech/relaxit/blob/main./doc/install.md" class="fa fa-github"> Edit on GitHub</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-  <section id="install">
-<h1>Install<a class="headerlink" href="#install" title="Link to this heading"></a></h1>
-<section id="install-using-pip">
-<h2>Install using pip<a class="headerlink" href="#install-using-pip" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>relaxit
-</pre></div>
-</div>
-</section>
-<section id="install-from-source">
-<h2>Install from source<a class="headerlink" href="#install-from-source" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/intsystems/relaxit
-</pre></div>
-</div>
-</section>
-<section id="install-via-git-clone">
-<h2>Install via Git clone<a class="headerlink" href="#install-via-git-clone" title="Link to this heading"></a></h2>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/intsystems/relaxit
-<span class="nb">cd</span><span class="w"> </span>relaxit
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-</pre></div>
-</div>
-</section>
-</section>
-
-
-           </div>
-          </div>
-          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="index.html" class="btn btn-neutral float-left" title="Just Relax It" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="quickstart.html" class="btn btn-neutral float-right" title="Quickstart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+  <nav class="wy-nav-side">
+    <div class="wy-side-nav-search">
+      <a href="index.html">
+        <img src="https://raw.githubusercontent.com/intsystems/DataMetaMap/master/assets/logo_full.jpg" alt="DataMetaMap" onerror="this.style.display='none'" />
+        <div class="proj">DataMetaMap</div>
+      </a>
     </div>
+    <div class="wy-menu">
+      <p class="caption">Guidelines</p>
+      <a href="install.html" class="active">Install</a>
+      <a href="quickstart.html">Quickstart</a>
+      <p class="caption">Code</p>
+      <a href="datametamap.html">data_meta_map</a>
+    </div>
+  </nav>
 
-  <hr/>
+  <section class="wy-nav-content-wrap">
+    <div class="wy-nav-content">
 
-  <div role="contentinfo">
-    <p>&#169; Copyright 2025, Daniil Dorin, Igor Ignashin, Nikita Kiselev, Andrey Veprikov, Ivan Papay, Vladislav Meshkov, Ilia Stepanov, Vladislav Minashkin.</p>
-  </div>
+      <ul class="breadcrumbs">
+        <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+        <li>Install</li>
+        <li class="breadcrumbs-aside">
+          <a href="https://github.com/intsystems/DataMetaMap" target="_blank">
+            <i class="fab fa-github"></i> Edit on GitHub
+          </a>
+        </li>
+      </ul>
+      <hr />
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+      <h1>Install</h1>
 
-</footer>
-        </div>
+      <h2>Requirements</h2>
+      <p>DataMetaMap requires <strong>Python 3.8+</strong> and the following packages:</p>
+      <ul>
+        <li><a href="https://pytorch.org/" target="_blank">PyTorch</a> ≥ 1.12</li>
+        <li><a href="https://numpy.org/" target="_blank">NumPy</a></li>
+        <li><a href="https://scikit-learn.org/" target="_blank">scikit-learn</a></li>
+        <li><a href="https://pythonot.github.io/" target="_blank">POT</a> (Python Optimal Transport)</li>
+        <li><a href="https://tqdm.github.io/" target="_blank">tqdm</a></li>
+      </ul>
+
+      <h2>Install from source (recommended)</h2>
+      <p>Clone the repository and install in editable mode:</p>
+<pre><code class="language-bash">git clone https://github.com/intsystems/DataMetaMap
+cd DataMetaMap
+pip install -e .
+</code></pre>
+
+      <h2>Install via pip (GitHub)</h2>
+<pre><code class="language-bash">pip install git+https://github.com/intsystems/DataMetaMap
+</code></pre>
+
+      <h2>Install dependencies manually</h2>
+      <p>If you prefer to install dependencies yourself:</p>
+<pre><code class="language-bash">pip install torch torchvision numpy scikit-learn POT tqdm
+</code></pre>
+
+      <div class="note">
+        <strong>Note:</strong> For GPU support, install the CUDA-enabled version of PyTorch.
+        See the <a href="https://pytorch.org/get-started/locally/" target="_blank">official PyTorch installation guide</a>.
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
 
+      <h2>Verify installation</h2>
+<pre><code class="language-python">import data_meta_map
+print(data_meta_map.__version__)
+# 0.0.1
+</code></pre>
+
+      <div class="rst-footer">
+        <div class="footer-nav">
+          <a href="index.html" class="btn-nav"><i class="fa fa-arrow-circle-left"></i> DataMetaMap</a>
+          <a href="quickstart.html" class="btn-nav">Quickstart <i class="fa fa-arrow-circle-right"></i></a>
+        </div>
+        <p>&copy; 2025 Vladislav Minashkin, Ivan Papay, Vladislav Meshkov, Ilya Stepanov.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script>hljs.highlightAll();</script>
 </body>
 </html>

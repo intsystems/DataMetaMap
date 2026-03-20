@@ -1,404 +1,158 @@
-
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" data-content_root="./">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; DataMetaMap  documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
-      <link rel="stylesheet" type="text/css" href="_static/css/relaxit.css?v=483648fb" />
-
-  
-      <script src="_static/jquery.js?v=5d32c60e"></script>
-      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=5929fcd5"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="_static/js/theme.js"></script>
-    <link rel="index" title="Index" href="#" />
-    <link rel="search" title="Search" href="search.html" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Index — DataMetaMap</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    :root { --sidebar-width: 260px; --sidebar-bg: #343131; --accent: #2980b9; }
+    body { margin: 0; font-family: "Lato", "Helvetica Neue", Arial, sans-serif; font-size: 15px; color: #333; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: #1a5a8a; text-decoration: underline; }
+    .wy-nav-side {
+      position: fixed; top: 0; left: 0; bottom: 0;
+      width: var(--sidebar-width); background: var(--sidebar-bg);
+      overflow-y: auto; z-index: 200;
+    }
+    .wy-side-nav-search { background: #2c2c2c; padding: 18px 16px 14px; text-align: center; }
+    .wy-side-nav-search img { max-width: 170px; margin-bottom: 8px; }
+    .wy-side-nav-search .proj { color: #fff; font-size: 1.05rem; font-weight: 700; }
+    .wy-menu { padding: 10px 0; }
+    .wy-menu .caption {
+      color: #aaa; font-size: 0.68rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 1px; padding: 14px 16px 4px;
+    }
+    .wy-menu a { display: block; padding: 7px 16px 7px 24px; color: #d9d9d9; font-size: 0.88rem; }
+    .wy-menu a:hover { color: #fff; background: #4a4a4a; text-decoration: none; }
+    .wy-nav-content-wrap { margin-left: var(--sidebar-width); min-height: 100vh; }
+    .wy-nav-content { padding: 28px 40px 60px; max-width: 920px; }
+    .wy-nav-top {
+      display: none; background: var(--sidebar-bg);
+      padding: 10px 16px; color: #fff; font-weight: 700; font-size: 1rem;
+      align-items: center; justify-content: space-between;
+    }
+    .wy-nav-top button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; }
+    .breadcrumbs { list-style: none; padding: 0 0 12px; margin: 0; display: flex; align-items: center; gap: 6px; color: #999; font-size: 0.85rem; }
+    .breadcrumbs li + li::before { content: "»"; }
+    .breadcrumbs a { color: #999; }
+    h1 { font-size: 1.9rem; font-weight: 700; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 18px; }
+    h2 { font-size: 1.1rem; font-weight: 700; margin-top: 22px; margin-bottom: 6px; color: #444; }
+    .jump { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px; }
+    .jump a {
+      display: inline-block; padding: 3px 10px;
+      border: 1px solid #ccc; border-radius: 3px;
+      font-size: 0.88rem; color: #555;
+    }
+    .jump a:hover { background: #f5f5f5; text-decoration: none; }
+    .idx-entry { margin: 4px 0; font-size: 0.9rem; }
+    .idx-entry a { margin-right: 8px; }
+    code { background: #f0f0f0; padding: 1px 4px; border-radius: 3px; font-size: 0.87em; }
+    .rst-footer { border-top: 1px solid #eee; padding-top: 18px; margin-top: 36px; color: #888; font-size: 0.82rem; }
+    @media (max-width: 768px) {
+      .wy-nav-side { transform: translateX(-100%); transition: transform .3s; }
+      .wy-nav-side.open { transform: translateX(0); }
+      .wy-nav-content-wrap { margin-left: 0; }
+      .wy-nav-top { display: flex; }
+      .wy-nav-content { padding: 20px 16px 40px; }
+    }
+  </style>
 </head>
+<body>
 
-<body class="wy-body-for-nav"> 
-  <div class="wy-grid-for-nav">
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
-
-          
-          
-          <a href="index.html">
-            
-              <img src="_static/logo.jpg" class="logo" alt="Logo"/>
-          </a>
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Guidelines</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="install.html">Install</a></li>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Code</span></p>
-
-
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">DataMetaMap</a>
-      </nav>
-
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          <div role="navigation" aria-label="Page navigation">
-  <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">Index</li>
-      <li class="wy-breadcrumbs-aside">
-              <a href="https://github.com/Intelligent-Systems-Phystech/DataMetaMap/blob/main./doc/genindex" class="fa fa-github"> Edit on GitHub</a>
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-             
-
-<h1 id="index">Index</h1>
-
-<div class="genindex-jumpbox">
- <a href="#A"><strong>A</strong></a>
- | <a href="#B"><strong>B</strong></a>
- | <a href="#C"><strong>C</strong></a>
- | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
- | <a href="#G"><strong>G</strong></a>
- | <a href="#H"><strong>H</strong></a>
- | <a href="#I"><strong>I</strong></a>
- | <a href="#L"><strong>L</strong></a>
- | <a href="#M"><strong>M</strong></a>
- | <a href="#R"><strong>R</strong></a>
- | <a href="#S"><strong>S</strong></a>
- | <a href="#V"><strong>V</strong></a>
- | <a href="#W"><strong>W</strong></a>
- 
-</div>
-<h2 id="A">A</h2>
-
-
-<h2 id="B">B</h2>
-
-
-<h2 id="C">C</h2>
-
-
-<h2 id="D">D</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax">DecoupledStraightThroughGumbelSoftmax (class in relaxit.distributions.DecoupledStraightThroughGumbelSoftmax)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.approx.dirichlet_approximation_fn">dirichlet_approximation_fn() (in module relaxit.distributions.approx)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.enumerate_support">enumerate_support() (relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax method)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.event_shape">event_shape (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli property)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.event_shape">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.event_shape">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.event_shape">(relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK.event_shape">(relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.event_shape">(relaxit.distributions.HardConcrete.HardConcrete property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.event_shape">(relaxit.distributions.InvertibleGaussian.InvertibleGaussian property)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.event_shape">(relaxit.distributions.RebarRelaxation.RebarRelaxation property)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax.expand">expand() (relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="G">G</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli">GaussianRelaxedBernoulli (class in relaxit.distributions.GaussianRelaxedBernoulli)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax">GeneralizedGumbelSoftmax (class in relaxit.distributions.GeneralizedGumbelSoftmax)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK">GumbelSoftmaxTopK (class in relaxit.distributions.GumbelSoftmaxTopK)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="H">H</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete">HardConcrete (class in relaxit.distributions.HardConcrete)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.has_enumerate_support">has_enumerate_support (relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax attribute)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.has_rsample">has_rsample (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli attribute)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.has_rsample">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.has_rsample">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.has_rsample">(relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK.has_rsample">(relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.has_rsample">(relaxit.distributions.HardConcrete.HardConcrete attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.has_rsample">(relaxit.distributions.InvertibleGaussian.InvertibleGaussian attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax.has_rsample">(relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.has_rsample">(relaxit.distributions.RebarRelaxation.RebarRelaxation attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.StochasticTimesSmooth.StochasticTimesSmooth.has_rsample">(relaxit.distributions.StochasticTimesSmooth.StochasticTimesSmooth attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.StraightThroughBernoulli.StraightThroughBernoulli.has_rsample">(relaxit.distributions.StraightThroughBernoulli.StraightThroughBernoulli attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="I">I</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian">InvertibleGaussian (class in relaxit.distributions.InvertibleGaussian)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="L">L</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax.loc">loc (relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax property)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.log_prob">log_prob() (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli method)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.log_prob">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.log_prob">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.log_prob">(relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK.log_prob">(relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.log_prob">(relaxit.distributions.HardConcrete.HardConcrete method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.log_prob">(relaxit.distributions.InvertibleGaussian.InvertibleGaussian method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.log_prob">(relaxit.distributions.RebarRelaxation.RebarRelaxation method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax">LogisticNormalSoftmax (class in relaxit.distributions.LogisticNormalSoftmax)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.approx.lognorm_approximation_fn">lognorm_approximation_fn() (in module relaxit.distributions.approx)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="M">M</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.mean">mean (relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax property)</a>
-</li>
-      <li>
-    module
-
-      <ul>
-        <li><a href="relaxit.html#module-relaxit">relaxit</a>
-</li>
-        <li><a href="relaxit.distributions.html#module-relaxit.distributions.approx">relaxit.distributions.approx</a>
-</li>
-        <li><a href="relaxit.distributions.html#module-relaxit.distributions.kl">relaxit.distributions.kl</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="R">R</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation">RebarRelaxation (class in relaxit.distributions.RebarRelaxation)</a>
-</li>
-      <li>
-    relaxit
-
-      <ul>
-        <li><a href="relaxit.html#module-relaxit">module</a>
-</li>
-      </ul></li>
-      <li>
-    relaxit.distributions.approx
-
-      <ul>
-        <li><a href="relaxit.distributions.html#module-relaxit.distributions.approx">module</a>
-</li>
-      </ul></li>
-      <li>
-    relaxit.distributions.kl
-
-      <ul>
-        <li><a href="relaxit.distributions.html#module-relaxit.distributions.kl">module</a>
-</li>
-      </ul></li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.rsample">rsample() (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli method)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.rsample">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.rsample">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.rsample">(relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK.rsample">(relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.rsample">(relaxit.distributions.HardConcrete.HardConcrete method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.rsample">(relaxit.distributions.InvertibleGaussian.InvertibleGaussian method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.rsample">(relaxit.distributions.RebarRelaxation.RebarRelaxation method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.StochasticTimesSmooth.StochasticTimesSmooth.rsample">(relaxit.distributions.StochasticTimesSmooth.StochasticTimesSmooth method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.StraightThroughBernoulli.StraightThroughBernoulli.rsample">(relaxit.distributions.StraightThroughBernoulli.StraightThroughBernoulli method)</a>
-</li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.rsample_value">rsample_value() (relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="S">S</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.sample">sample() (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli method)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.sample">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.sample">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.sample">(relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK.sample">(relaxit.distributions.GumbelSoftmaxTopK.GumbelSoftmaxTopK method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.sample">(relaxit.distributions.HardConcrete.HardConcrete method)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.sample">(relaxit.distributions.RebarRelaxation.RebarRelaxation method)</a>
-</li>
-      </ul></li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.sample_value">sample_value() (relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax.scale">scale (relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax property)</a>
-</li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.softmax_plus_plus">softmax_plus_plus() (relaxit.distributions.InvertibleGaussian.InvertibleGaussian method)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.StochasticTimesSmooth.StochasticTimesSmooth">StochasticTimesSmooth (class in relaxit.distributions.StochasticTimesSmooth)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.StraightThroughBernoulli.StraightThroughBernoulli">StraightThroughBernoulli (class in relaxit.distributions.StraightThroughBernoulli)</a>
-</li>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli.support">support (relaxit.distributions.CorrelatedRelaxedBernoulli.CorrelatedRelaxedBernoulli attribute)</a>
-
-      <ul>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.support">(relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli.support">(relaxit.distributions.GaussianRelaxedBernoulli.GaussianRelaxedBernoulli attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.HardConcrete.HardConcrete.support">(relaxit.distributions.HardConcrete.HardConcrete attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.InvertibleGaussian.InvertibleGaussian.support">(relaxit.distributions.InvertibleGaussian.InvertibleGaussian attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax.support">(relaxit.distributions.LogisticNormalSoftmax.LogisticNormalSoftmax attribute)</a>
-</li>
-        <li><a href="relaxit.distributions.html#relaxit.distributions.RebarRelaxation.RebarRelaxation.support">(relaxit.distributions.RebarRelaxation.RebarRelaxation attribute)</a>
-</li>
-      </ul></li>
-  </ul></td>
-</tr></table>
-
-<h2 id="V">V</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax.variance">variance (relaxit.distributions.DecoupledStraightThroughGumbelSoftmax.DecoupledStraightThroughGumbelSoftmax property)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="W">W</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="relaxit.distributions.html#relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax.weights_to_values">weights_to_values() (relaxit.distributions.GeneralizedGumbelSoftmax.GeneralizedGumbelSoftmax method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-
-
-           </div>
-          </div>
-          <footer>
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>&#169; Copyright 2026, Ivan Papay, Vladislav Meshkov, Ilia Stepanov, Vladislav Minashkin.</p>
+  <div class="wy-nav-top">
+    <button onclick="document.querySelector('.wy-nav-side').classList.toggle('open')"><i class="fa fa-bars"></i></button>
+    <span>DataMetaMap</span>
   </div>
 
-  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    provided by <a href="https://readthedocs.org">Read the Docs</a>.
-   
+  <nav class="wy-nav-side">
+    <div class="wy-side-nav-search">
+      <a href="index.html">
+        <img src="https://raw.githubusercontent.com/intsystems/DataMetaMap/master/assets/logo_full.jpg" alt="DataMetaMap" onerror="this.style.display='none'" />
+        <div class="proj">DataMetaMap</div>
+      </a>
+    </div>
+    <div class="wy-menu">
+      <p class="caption">Guidelines</p>
+      <a href="install.html">Install</a>
+      <a href="quickstart.html">Quickstart</a>
+      <p class="caption">Code</p>
+      <a href="datametamap.html">data_meta_map</a>
+    </div>
+  </nav>
 
-</footer>
-        </div>
+  <section class="wy-nav-content-wrap">
+    <div class="wy-nav-content">
+
+      <ul class="breadcrumbs">
+        <li><a href="index.html"><i class="fa fa-home"></i></a></li>
+        <li>Index</li>
+      </ul>
+      <hr />
+
+      <h1>Index</h1>
+
+      <div class="jump">
+        <a href="#A">A</a> <a href="#B">B</a> <a href="#C">C</a>
+        <a href="#D">D</a> <a href="#E">E</a> <a href="#G">G</a>
+        <a href="#M">M</a> <a href="#P">P</a> <a href="#S">S</a>
+        <a href="#T">T</a> <a href="#W">W</a>
       </div>
-    </section>
-  </div>
-  <script>
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script> 
+
+      <h2 id="A">A</h2>
+      <div class="idx-entry"><a href="datametamap.html#base-embedder"><code>augment_features()</code></a> — WassersteinEmbedder method</div>
+
+      <h2 id="B">B</h2>
+      <div class="idx-entry"><a href="datametamap.html#base-embedder"><code>BaseEmbedder</code></a> — abstract base class</div>
+      <div class="idx-entry"><a href="datametamap.html#helpers"><code>compute_bures_term()</code></a> — helper function</div>
+
+      <h2 id="C">C</h2>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>clear_cache()</code></a> — WassersteinEmbedder method</div>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>compute_pairwise_distances()</code></a> — WassersteinEmbedder method</div>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>compute_wte()</code></a> — WassersteinEmbedder method</div>
+
+      <h2 id="D">D</h2>
+      <div class="idx-entry"><a href="datametamap.html"><code>data_meta_map</code></a> — package</div>
+      <div class="idx-entry"><a href="modules.html"><code>data_meta_map.base_embedder</code></a> — module</div>
+      <div class="idx-entry"><a href="modules.html"><code>data_meta_map.datasets</code></a> — module</div>
+      <div class="idx-entry"><a href="modules.html"><code>data_meta_map.models</code></a> — module</div>
+      <div class="idx-entry"><a href="modules.html"><code>data_meta_map.task2vec</code></a> — subpackage</div>
+      <div class="idx-entry"><a href="modules.html"><code>data_meta_map.wasserstein_embedder</code></a> — module</div>
+
+      <h2 id="E">E</h2>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>embed()</code></a> — Task2Vec method</div>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>embed_distance_matrix()</code></a> — WassersteinEmbedder method</div>
+      <div class="idx-entry"><a href="datametamap.html#base-embedder"><code>embed()</code></a> — BaseEmbedder abstract method</div>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>Embedding</code></a> — Task2Vec result class</div>
+
+      <h2 id="G">G</h2>
+      <div class="idx-entry"><a href="datametamap.html#base-embedder"><code>get_class_statistics()</code></a> — BaseEmbedder method</div>
+
+      <h2 id="M">M</h2>
+      <div class="idx-entry"><a href="modules.html">Module index</a></div>
+
+      <h2 id="P">P</h2>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>preprocess_dataset()</code></a> — WassersteinEmbedder method</div>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>ProbeNetwork</code></a> — abstract probe network class</div>
+
+      <h2 id="S">S</h2>
+      <div class="idx-entry"><a href="datametamap.html#helpers"><code>sqrtm_newton_schulz()</code></a> — helper function</div>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>SupportsGetItem</code></a> — protocol</div>
+
+      <h2 id="T">T</h2>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>Task2Vec</code></a> — task embedding class</div>
+      <div class="idx-entry"><a href="datametamap.html#task2vec"><code>task2vec()</code></a> — convenience wrapper function</div>
+
+      <h2 id="W">W</h2>
+      <div class="idx-entry"><a href="datametamap.html#wasserstein-embedder"><code>WassersteinEmbedder</code></a> — Wasserstein-based embedder</div>
+
+      <div class="rst-footer">
+        <p>&copy; 2025 Vladislav Minashkin, Ivan Papay, Vladislav Meshkov, Ilya Stepanov.</p>
+      </div>
+
+    </div>
+  </section>
 
 </body>
 </html>
