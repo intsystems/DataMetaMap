@@ -1,0 +1,37 @@
+pretrain: {}
+pretrain_to_task_config:
+  device: cuda
+  estimate_network_params:
+    hidden_dim: 256
+    num_classes: 10
+  model:
+    name: resnet18
+    pretrained: true
+  need_pretrain: false
+  paths:
+    checkpoint: /home/machenike/bmml/DataMetaMap/checkpoints/letters_pretrain.pt
+    checkpoint_task: /home/machenike/bmml/DataMetaMap/checkpoints/best_model.pt
+    data_dir: /home/machenike/bmml/DataMetaMap/data
+    save_logs: /home/machenike/bmml/DataMetaMap/logs/pretrain_to_task_logs/letters-kmnist.yaml
+    test_parquet: /home/machenike/bmml/DataMetaMap/pretrain_embeddings/test_embeds.parquet
+    train_parquet: /home/machenike/bmml/DataMetaMap/pretrain_embeddings/train_embeds.parquet
+  pretrain_dataset_name: letters
+  pretrain_only: false
+  seed: 42
+  task_dataset_name: kmnist
+  training:
+    batch_size: 128
+    early_stopping_epochs: 5
+    epochs: 20
+    lr: 0.0003
+    val_split: 0.2
+  training_task:
+    batch_size: 128
+    early_stopping_epochs: 10
+    epochs: 20
+    lr: 0.0003
+    val_split: 0.2
+task:
+  best_val_accuracy: 0.99175
+  best_val_epoch: 16
+  test_acc: 0.99
