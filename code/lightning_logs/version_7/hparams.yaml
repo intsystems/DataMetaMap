@@ -1,0 +1,43 @@
+config: !!python/object:DataMetaMap.embedders.dataset2vec.config.Dataset2VecConfig
+  __dict__:
+    activation_cls: !!python/name:torch.nn.modules.activation.ReLU ''
+    f_block_repetitions: 3
+    f_dense_hidden_size: 16
+    f_out_size: 32
+    f_res_hidden_size: 16
+    f_res_n_layers: 3
+    g_layers_sizes:
+    - 16
+    - 8
+    - 8
+    h_block_repetitions: 3
+    h_dense_hidden_size: 8
+    h_res_hidden_size: 16
+    h_res_n_layers: 3
+    output_size: 16
+  __pydantic_extra__: null
+  __pydantic_fields_set__: !!set
+    f_block_repetitions: null
+    f_dense_hidden_size: null
+    f_out_size: null
+    f_res_hidden_size: null
+    f_res_n_layers: null
+    g_layers_sizes: null
+    h_block_repetitions: null
+    h_dense_hidden_size: null
+    h_res_hidden_size: null
+    h_res_n_layers: null
+    output_size: null
+  __pydantic_private__: null
+optimizer_config: !!python/object:DataMetaMap.embedders.dataset2vec.config.OptimizerConfig
+  __dict__:
+    gamma: 1.0
+    learning_rate: 0.0003
+    optimizer_cls: !!python/name:torch.optim.adam.Adam ''
+    weight_decay: 0.0001
+  __pydantic_extra__: null
+  __pydantic_fields_set__: !!set
+    gamma: null
+    learning_rate: null
+    weight_decay: null
+  __pydantic_private__: null

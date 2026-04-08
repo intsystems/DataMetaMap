@@ -87,6 +87,27 @@ def resnet34(pretrained=False, num_classes=1000):
     return model
 
 
+from data_meta_map.dataset2vec.model import Dataset2Vec as _Dataset2VecModel
+from data_meta_map.dataset2vec.config import (
+    Dataset2VecConfig as _Dataset2VecConfig,
+    OptimizerConfig as _OptimizerConfig,
+)
+
+
+@_add_model
+def dataset2vec(config=None, optimizer_config=None, **_):
+    """Constructs a Dataset2Vec model for tabular dataset embedding.
+
+    Args:
+        config: Dataset2Vec architecture configuration. If None, uses defaults.
+        optimizer_config: Optimizer configuration. If None, uses defaults.
+        **_: Absorbs unused kwargs from get_model() (pretrained, num_classes).
+    """
+    cfg = config if config is not None else _Dataset2VecConfig()
+    opt_cfg = optimizer_config if optimizer_config is not None else _OptimizerConfig()
+    return _Dataset2VecModel(cfg, opt_cfg)
+
+
 def get_model(model_name, pretrained=False, num_classes=1000):
     try:
         return _MODELS[model_name](pretrained=pretrained, num_classes=num_classes)
