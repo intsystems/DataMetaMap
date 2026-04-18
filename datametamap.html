@@ -130,6 +130,10 @@
       <a href="datametamap.html#base-embedder" class="sub">BaseEmbedder</a>
       <a href="datametamap.html#wasserstein-embedder" class="sub">WassersteinEmbedder</a>
       <a href="datametamap.html#task2vec" class="sub">Task2Vec</a>
+      <a href="datametamap.html#probe-network" class="sub">ProbeNetwork</a>
+      <a href="datametamap.html#embedding" class="sub">Embedding</a>
+      <a href="datametamap.html#task-similarity" class="sub">task_similarity</a>
+      <a href="datametamap.html#dataset2vec-embedder" class="sub">Dataset2VecEmbedder</a>
     </div>
   </nav>
 
@@ -163,6 +167,10 @@
           <li><a href="#base-embedder">data_meta_map.base_embedder.BaseEmbedder</a></li>
           <li><a href="#wasserstein-embedder">data_meta_map.wasserstein_embedder.WassersteinEmbedder</a></li>
           <li><a href="#task2vec">data_meta_map.task2vec.Task2Vec</a></li>
+          <li><a href="#probe-network">data_meta_map.task2vec.ProbeNetwork</a></li>
+          <li><a href="#embedding">data_meta_map.task2vec.Embedding</a></li>
+          <li><a href="#task-similarity">data_meta_map.task2vec.task_similarity</a></li>
+          <li><a href="#dataset2vec-embedder">data_meta_map.dataset2vec_embedder.Dataset2VecEmbedder</a></li>
           <li><a href="#helpers">Helper functions</a></li>
         </ul>
       </div>
@@ -244,7 +252,7 @@
       <div class="sig-box">
         <span class="sig-kw">class</span>
         <span class="sig-name">data_meta_map.wasserstein_embedder.WassersteinEmbedder</span>(<br />
-        &nbsp;&nbsp;&nbsp;&nbsp;emb_dim: <span class="sig-type">int</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;emb_dim: <span class="sig-type">int</span> <span class="sig-default">= 2</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;device: <span class="sig-type">str | torch.device</span> <span class="sig-default">= "cpu"</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;max_samples: <span class="sig-type">int | None</span> <span class="sig-default">= None</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;batch_size: <span class="sig-type">int</span> <span class="sig-default">= 64</span>,<br />
@@ -392,9 +400,20 @@ task_embs, label_embs, augmented = embedder.compute_wte([cifar10, mnist])
         <p>Clear internal data and statistics caches to free memory.</p>
       </div>
 
+      <div class="method-section">
+        <h3>
+          <code>embed(datasets, **kwargs)</code>
+        </h3>
+        <p>
+          Satisfies the <code>BaseEmbedder</code> abstract interface.
+          Delegates to <code>compute_wte(datasets, **kwargs)</code> and returns
+          <code>(task_embeddings, label_embeddings, augmented_datasets)</code>.
+        </p>
+      </div>
+
       <!-- ==================== Task2Vec ==================== -->
       <h2 id="task2vec">
-        data_meta_map.task2vec
+        data_meta_map.task2vec.Task2Vec
         <span class="src-link">
           <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
             <i class="fab fa-github"></i> source
@@ -408,29 +427,40 @@ task_embs, label_embs, augmented = embedder.compute_wte([cifar10, mnist])
         &nbsp;&nbsp;&nbsp;&nbsp;model: <span class="sig-type">ProbeNetwork</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;skip_layers: <span class="sig-type">int</span> <span class="sig-default">= 0</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;max_samples: <span class="sig-type">int | None</span> <span class="sig-default">= None</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;classifier_opts: <span class="sig-type">dict | None</span> <span class="sig-default">= None</span>,<br />
         &nbsp;&nbsp;&nbsp;&nbsp;method: <span class="sig-type">str</span> <span class="sig-default">= "montecarlo"</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;method_opts: <span class="sig-type">dict | None</span> <span class="sig-default">= None</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;loader_opts: <span class="sig-type">dict | None</span> <span class="sig-default">= None</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;bernoulli: <span class="sig-type">bool</span> <span class="sig-default">= False</span>,<br />
         )
       </div>
 
       <p>
-        Task2Vec embeds a dataset as a vector by computing the
-        <strong>Fisher information matrix</strong> of a pre-trained probe network fine-tuned on the target task.
-        See <a href="https://arxiv.org/pdf/1902.03545" target="_blank">Achille et al., 2019</a>.
+        Task2Vec embeds a dataset as a fixed-length vector by computing the diagonal of the
+        <strong>Fisher Information Matrix (FIM)</strong> of a pre-trained probe network
+        fine-tuned on the target task.
+        Intuitively, parameters that change a lot when adapting to a task carry more information
+        about that task — and vice versa.
+        See <a href="https://arxiv.org/pdf/1902.03545" target="_blank">Achille et al., ICCV 2019</a>.
       </p>
 
       <table class="param-table">
         <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
-        <tr><td>model</td><td>ProbeNetwork</td><td>Pre-trained network exposing a <code>.classifier</code> property.</td></tr>
-        <tr><td>skip_layers</td><td>int</td><td>Number of initial layers to skip when computing Fisher info.</td></tr>
-        <tr><td>max_samples</td><td>int | None</td><td>Maximum samples from dataset. <code>None</code> = all.</td></tr>
-        <tr><td>method</td><td>str</td><td><code>"montecarlo"</code> or <code>"variational"</code>.</td></tr>
+        <tr><td>model</td><td>ProbeNetwork</td><td>Pre-trained network exposing a <code>.classifier</code> property (e.g. ResNet-18).</td></tr>
+        <tr><td>skip_layers</td><td>int</td><td>Number of initial layers to skip. Cached activations are used as inputs instead. Useful for large models.</td></tr>
+        <tr><td>max_samples</td><td>int | None</td><td>Maximum samples to use from the dataset. <code>None</code> = all.</td></tr>
+        <tr><td>classifier_opts</td><td>dict | None</td><td>Kwargs forwarded to <code>_fit_classifier</code> (e.g. <code>{"epochs": 5, "learning_rate": 1e-3}</code>).</td></tr>
+        <tr><td>method</td><td>str</td><td>Fisher approximation: <code>"montecarlo"</code> (default, faster) or <code>"variational"</code> (more accurate).</td></tr>
+        <tr><td>method_opts</td><td>dict | None</td><td>Kwargs forwarded to the Fisher method (e.g. <code>{"epochs": 2}</code>).</td></tr>
+        <tr><td>loader_opts</td><td>dict | None</td><td>Kwargs for the internal DataLoader (e.g. <code>{"batch_size": 32, "num_workers": 4}</code>).</td></tr>
+        <tr><td>bernoulli</td><td>bool</td><td>If <code>True</code>, use <code>BCEWithLogitsLoss</code> (binary classification). Default uses <code>CrossEntropyLoss</code>.</td></tr>
       </table>
 
       <h3>Methods</h3>
 
       <div class="method-section">
         <h3>
-          <code>embed(dataset, create_final_embedding=False)</code>
+          <code>embed(dataset, create_final_embedding=True)</code>
           <span class="src-link">
             <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
               <i class="fab fa-github"></i>
@@ -438,22 +468,399 @@ task_embs, label_embs, augmented = embedder.compute_wte([cifar10, mnist])
           </span>
         </h3>
         <p>
-          Fine-tune the probe classifier on <code>dataset</code> and compute the Fisher information
-          matrix as the task embedding.
+          Full pipeline: cache features → fit classifier → compute Fisher → extract embedding.
         </p>
-        <p>
-          <strong>Returns:</strong> <code>Embedding</code> object with fields:
-        </p>
-        <ul>
-          <li><code>embedding.hessian</code> — numpy array, per-parameter Fisher diagonal.</li>
-          <li><code>embedding.scale</code> — numpy array, layer scales.</li>
-        </ul>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>dataset</td><td>Dataset</td><td>Target PyTorch dataset to embed.</td></tr>
+          <tr><td>create_final_embedding</td><td>bool</td><td>If <code>True</code>, returns <code>hessian / scale</code> (normalized numpy array). If <code>False</code>, returns the raw <code>Embedding</code> object.</td></tr>
+        </table>
+        <p><strong>Returns:</strong> <code>ndarray</code> or <code>Embedding</code> (see above).</p>
 <pre><code class="language-python">from data_meta_map.task2vec.task2vec import task2vec
+from data_meta_map.models import resnet18
 
-embedding = task2vec(probe_network, cifar10, max_samples=500)
+probe = resnet18(pretrained=True)
+embedding = task2vec(probe, cifar10, max_samples=500)
 print(embedding.hessian.shape)  # (num_params,)
 </code></pre>
       </div>
+
+      <div class="method-section">
+        <h3>
+          <code>compute_fisher(dataset)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          Compute the diagonal FIM approximation and store it in each layer's
+          <code>weight.grad2_acc</code> attribute. Dispatches to
+          <code>montecarlo_fisher</code> or <code>variational_fisher</code>
+          depending on <code>self.method</code>.
+        </p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>montecarlo_fisher(dataset, epochs=1)</code>
+        </h3>
+        <p>
+          Monte-Carlo approximation of the FIM.
+          For each mini-batch, samples <em>y</em> from the model's output distribution
+          (<em>not</em> from the dataset labels) and accumulates squared gradients.
+          Fast but approximate.
+        </p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>variational_fisher(dataset, epochs=1, beta=1e-7)</code>
+        </h3>
+        <p>
+          Variational approximation: optimises per-weight noise variance
+          subject to a KL regulariser. Slower but more accurate than Monte-Carlo.
+        </p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>extract_embedding(model)</code>
+        </h3>
+        <p>
+          Read <code>grad2_acc</code> values stored by <code>compute_fisher</code>
+          and pack them into an <code>Embedding</code> object.
+          Classifier weights are excluded.
+        </p>
+        <p><strong>Returns:</strong> <code>Embedding</code> with <code>.hessian</code> and <code>.scale</code>.</p>
+      </div>
+
+      <!-- ==================== ProbeNetwork ==================== -->
+      <h2 id="probe-network">
+        data_meta_map.task2vec.ProbeNetwork
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.task2vec.task2vec.ProbeNetwork</span>
+        <span class="tag tag-abstract">ABC</span>
+      </div>
+
+      <p>
+        Abstract base class that all probe networks must inherit from.
+        Extends <code>torch.nn.Module</code>.
+        The only requirement is exposing a <code>classifier</code> property that returns
+        the final classification layer (e.g. a <code>nn.Linear</code>).
+        Task2Vec uses this property to fit and exclude the head during FIM extraction.
+      </p>
+
+      <div class="method-section">
+        <h3><code>classifier</code> <span class="tag tag-abstract">abstractproperty</span></h3>
+        <p>Returns the final classification sub-module (e.g. the last fully-connected layer).</p>
+      </div>
+
+      <p>The library ships a ready-made <strong>ResNet</strong> probe in <code>data_meta_map.models</code>:</p>
+<pre><code class="language-python">from data_meta_map.models import resnet18, resnet34
+
+# Pre-trained on ImageNet
+probe = resnet18(pretrained=True, num_classes=10)
+</code></pre>
+
+      <p>To use your own network, subclass <code>ProbeNetwork</code>:</p>
+<pre><code class="language-python">from data_meta_map.task2vec.task2vec import ProbeNetwork
+import torch.nn as nn
+
+class MyProbe(ProbeNetwork):
+    def __init__(self):
+        super().__init__()
+        self.backbone = nn.Sequential(nn.Linear(512, 256), nn.ReLU())
+        self.fc = nn.Linear(256, 10)
+        self.layers = [self.backbone, self.fc]
+
+    @property
+    def classifier(self):
+        return self.fc
+
+    @classifier.setter
+    def classifier(self, val):
+        self.fc = val
+
+    def forward(self, x, start_from=0):
+        for layer in self.layers[start_from:]:
+            x = layer(x)
+        return x
+</code></pre>
+
+      <!-- ==================== Embedding ==================== -->
+      <h2 id="embedding">
+        data_meta_map.task2vec.Embedding
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task2vec.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.task2vec.task2vec.Embedding</span>(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;hessian: <span class="sig-type">array-like</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;scale: <span class="sig-type">array-like</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;meta: <span class="sig-type">Any</span> <span class="sig-default">= None</span>,<br />
+        )
+      </div>
+
+      <p>
+        Plain data class returned by <code>Task2Vec.extract_embedding</code>.
+        Stores the per-parameter Fisher diagonal and layer scales as numpy arrays.
+      </p>
+
+      <table class="param-table">
+        <tr><th>Attribute</th><th>Type</th><th>Description</th></tr>
+        <tr><td>hessian</td><td>ndarray [P]</td><td>Filter-wise diagonal FIM; one value per convolutional filter / linear unit. Larger values → parameter more task-relevant.</td></tr>
+        <tr><td>scale</td><td>ndarray [P]</td><td>Prior scale for each parameter, used for normalization. Typically all-ones for Monte-Carlo method.</td></tr>
+        <tr><td>meta</td><td>Any</td><td>Optional metadata (e.g. task name, dataset info).</td></tr>
+      </table>
+
+      <p>The normalized embedding used for distance computation is <code>hessian / scale</code>:</p>
+<pre><code class="language-python">raw_emb = task2vec(probe, dataset, create_final_embedding=False)
+normalized = raw_emb.hessian / raw_emb.scale  # same as create_final_embedding=True
+</code></pre>
+
+      <!-- ==================== task_similarity ==================== -->
+      <h2 id="task-similarity">
+        data_meta_map.task2vec.task_similarity
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/task2vec/task_similarity.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <p>
+        Utility module for comparing <code>Embedding</code> objects.
+        Provides pairwise distance functions and matrix-building helpers.
+      </p>
+
+      <h3>Distance functions</h3>
+      <p>All functions accept two <code>Embedding</code> objects and return a scalar distance.</p>
+
+      <table class="param-table">
+        <tr><th>Function</th><th>Formula</th><th>Notes</th></tr>
+        <tr>
+          <td><code>cosine(e0, e1)</code></td>
+          <td>Cosine distance on scaled Hessians</td>
+          <td>Most commonly used. Range [0, 2].</td>
+        </tr>
+        <tr>
+          <td><code>kl(e0, e1)</code></td>
+          <td>Symmetric KL divergence on variances</td>
+          <td>Symmetric: max(KL(p‖q), KL(q‖p)). Always ≥ 0.</td>
+        </tr>
+        <tr>
+          <td><code>asymmetric_kl(e0, e1)</code></td>
+          <td>KL(p‖q) only</td>
+          <td>Not symmetric. Useful for transfer direction analysis.</td>
+        </tr>
+        <tr>
+          <td><code>jsd(e0, e1)</code></td>
+          <td>Jensen-Shannon divergence</td>
+          <td>Symmetric, bounded. Range [0, log 2].</td>
+        </tr>
+        <tr>
+          <td><code>normalized_cosine(e0, e1)</code></td>
+          <td>Cosine on normalized variances</td>
+          <td>Scale-invariant variant of <code>cosine</code>.</td>
+        </tr>
+        <tr>
+          <td><code>correlation(e0, e1)</code></td>
+          <td>Correlation distance on variances</td>
+          <td><code>1 - Pearson correlation</code>.</td>
+        </tr>
+      </table>
+
+      <h3>Matrix helpers</h3>
+
+      <div class="method-section">
+        <h3><code>pdist(embeddings, distance='cosine')</code></h3>
+        <p>
+          Compute all-pairs distance matrix for a list of embeddings.
+          Result is symmetric with zero diagonal.
+        </p>
+        <p><strong>Returns:</strong> <code>ndarray [N, N]</code></p>
+<pre><code class="language-python">from data_meta_map.task2vec.task_similarity import pdist
+
+embeddings = [task2vec(probe, ds) for ds in [cifar10, mnist, stl10]]
+D = pdist(embeddings, distance="cosine")
+# array([[0.   , 0.312, 0.481],
+#        [0.312, 0.   , 0.395],
+#        [0.481, 0.395, 0.   ]])
+</code></pre>
+      </div>
+
+      <div class="method-section">
+        <h3><code>cdist(from_embeddings, to_embeddings, distance='cosine')</code></h3>
+        <p>
+          Cross-distance matrix between two lists of embeddings.
+        </p>
+        <p><strong>Returns:</strong> <code>ndarray [M, N]</code></p>
+      </div>
+
+      <div class="method-section">
+        <h3><code>plot_distance_matrix(embeddings, labels=None, distance='cosine')</code></h3>
+        <p>
+          Render a clustered heatmap of pairwise distances using seaborn.
+          Requires <code>seaborn</code>, <code>scipy</code>, <code>matplotlib</code>.
+        </p>
+      </div>
+
+      <!-- ==================== Dataset2VecEmbedder ==================== -->
+      <h2 id="dataset2vec-embedder">
+        data_meta_map.dataset2vec_embedder
+        <span class="src-link">
+          <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/dataset2vec_embedder.py" target="_blank">
+            <i class="fab fa-github"></i> source
+          </a>
+        </span>
+      </h2>
+
+      <div class="sig-box">
+        <span class="sig-kw">class</span>
+        <span class="sig-name">data_meta_map.dataset2vec_embedder.Dataset2VecEmbedder</span>(<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;model: <span class="sig-type">Dataset2Vec</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;max_epochs: <span class="sig-type">int</span> <span class="sig-default">= 10</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;batch_size: <span class="sig-type">int</span> <span class="sig-default">= 32</span>,<br />
+        &nbsp;&nbsp;&nbsp;&nbsp;n_batches: <span class="sig-type">int</span> <span class="sig-default">= 100</span>,<br />
+        )
+      </div>
+
+      <p>
+        Dataset embedder based on <strong>Dataset2Vec</strong>
+        (<a href="https://arxiv.org/pdf/1905.11063" target="_blank">Iwata &amp; Ghahramani, 2020</a>).
+        Learns a permutation-invariant meta-feature extractor for tabular datasets via
+        contrastive training. The encoder operates on (feature, target) pairs and aggregates
+        them with two levels of mean-pooling.
+      </p>
+
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>model</td><td>Dataset2Vec</td><td>Pre-initialized model. Create with <code>get_model('dataset2vec')</code> or <code>Dataset2Vec(config, opt_config)</code>.</td></tr>
+        <tr><td>max_epochs</td><td>int</td><td>Training epochs for <code>fit()</code>.</td></tr>
+        <tr><td>batch_size</td><td>int</td><td>Batch size for the data loader.</td></tr>
+        <tr><td>n_batches</td><td>int</td><td>Number of batches per epoch.</td></tr>
+      </table>
+
+      <h3>Methods</h3>
+
+      <div class="method-section">
+        <h3>
+          <code>fit(data, val_data=None, trainer_kwargs=None)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/dataset2vec_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>Train the Dataset2Vec model on a collection of tabular datasets.</p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>data</td><td>Path | list[Path] | list[DataFrame] | list</td><td>Training datasets. Each element is one dataset; the last column is the target.</td></tr>
+          <tr><td>val_data</td><td>same | None</td><td>Optional validation data.</td></tr>
+          <tr><td>trainer_kwargs</td><td>dict | None</td><td>Extra kwargs for <code>pytorch_lightning.Trainer</code>.</td></tr>
+        </table>
+        <p><strong>Returns:</strong> <code>self</code> (for chaining).</p>
+      </div>
+
+      <div class="method-section">
+        <h3>
+          <code>embed(X, y)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/dataset2vec_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>Compute embedding for a single tabular dataset. Must call <code>fit()</code> first.</p>
+        <table class="param-table">
+          <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+          <tr><td>X</td><td>Tensor [n, d]</td><td>Feature matrix.</td></tr>
+          <tr><td>y</td><td>Tensor [n] or [n, 1]</td><td>Target vector.</td></tr>
+        </table>
+        <p><strong>Returns:</strong> <code>ndarray [output_size]</code></p>
+        <p><strong>Raises:</strong> <code>RuntimeError</code> if called before <code>fit()</code>.</p>
+<pre><code class="language-python">from data_meta_map.models import get_model
+from data_meta_map.dataset2vec_embedder import Dataset2VecEmbedder
+import torch
+
+model = get_model("dataset2vec")
+embedder = Dataset2VecEmbedder(model, max_epochs=20)
+embedder.fit(train_datasets)
+
+X = torch.randn(100, 10)
+y = torch.randint(0, 3, (100,)).float()
+vec = embedder.embed(X, y)
+print(vec.shape)  # (16,)  — default output_size
+</code></pre>
+      </div>
+
+      <div class="method-section">
+        <h3><code>save(path)</code> / <code>load(path)</code></h3>
+        <p>
+          Save and load model weights (<code>state_dict</code>) to/from disk.
+          <code>load()</code> sets <code>_is_fitted = True</code> and returns <code>self</code>.
+        </p>
+<pre><code class="language-python">embedder.save("d2v_weights.pt")
+embedder2 = Dataset2VecEmbedder(get_model("dataset2vec"))
+embedder2.load("d2v_weights.pt")
+</code></pre>
+      </div>
+
+      <h3>Convenience function</h3>
+
+      <div class="method-section">
+        <h3>
+          <code>dataset2vec(model, X, y, fit_data=None, **kwargs)</code>
+          <span class="src-link">
+            <a href="https://github.com/intsystems/DataMetaMap/blob/develop/src/data_meta_map/dataset2vec_embedder.py" target="_blank">
+              <i class="fab fa-github"></i>
+            </a>
+          </span>
+        </h3>
+        <p>
+          One-shot helper: optionally fit then embed.
+          If <code>fit_data</code> is <code>None</code>, the model must already be trained.
+        </p>
+<pre><code class="language-python">from data_meta_map.dataset2vec_embedder import dataset2vec
+from data_meta_map.models import get_model
+
+model = get_model("dataset2vec")
+vec = dataset2vec(model, X_test, y_test, fit_data=train_datasets)
+</code></pre>
+      </div>
+
+      <h3>Model configuration</h3>
+      <p>
+        The <code>Dataset2Vec</code> architecture is controlled by
+        <code>data_meta_map.dataset2vec.config.Dataset2VecConfig</code>:
+      </p>
+<pre><code class="language-python">from data_meta_map.dataset2vec.config import Dataset2VecConfig, OptimizerConfig
+from data_meta_map.dataset2vec.model import Dataset2Vec
+import torch.nn as nn
+
+cfg = Dataset2VecConfig(
+    output_size=32,          # embedding dimension
+    f_dense_hidden_size=64,  # encoder hidden size
+    activation_cls=nn.GELU,  # activation function
+)
+opt_cfg = OptimizerConfig(learning_rate=5e-4)
+model = Dataset2Vec(cfg, opt_cfg)
+</code></pre>
 
       <!-- ==================== Helpers ==================== -->
       <h2 id="helpers">

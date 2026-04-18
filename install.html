@@ -108,12 +108,15 @@
       <h1>Install</h1>
 
       <h2>Requirements</h2>
-      <p>DataMetaMap requires <strong>Python 3.8+</strong> and the following packages:</p>
+      <p>DataMetaMap requires <strong>Python 3.10+</strong> and the following packages:</p>
       <ul>
-        <li><a href="https://pytorch.org/" target="_blank">PyTorch</a> ≥ 1.12</li>
+        <li><a href="https://pytorch.org/" target="_blank">PyTorch</a> ≥ 2.0</li>
+        <li><a href="https://www.pytorchlightning.ai/" target="_blank">PyTorch Lightning</a> — for Dataset2Vec training</li>
         <li><a href="https://numpy.org/" target="_blank">NumPy</a></li>
         <li><a href="https://scikit-learn.org/" target="_blank">scikit-learn</a></li>
-        <li><a href="https://pythonot.github.io/" target="_blank">POT</a> (Python Optimal Transport)</li>
+        <li><a href="https://pythonot.github.io/" target="_blank">POT</a> (Python Optimal Transport) — for WassersteinEmbedder</li>
+        <li><a href="https://docs.pydantic.dev/" target="_blank">pydantic</a> ≥ 2.0 — for Dataset2Vec config</li>
+        <li><a href="https://pandas.pydata.org/" target="_blank">pandas</a> — for Dataset2Vec data loading</li>
         <li><a href="https://tqdm.github.io/" target="_blank">tqdm</a></li>
       </ul>
 
@@ -130,7 +133,7 @@ pip install -e .
 
       <h2>Install dependencies manually</h2>
       <p>If you prefer to install dependencies yourself:</p>
-<pre><code class="language-bash">pip install torch torchvision numpy scikit-learn POT tqdm
+<pre><code class="language-bash">pip install torch torchvision numpy scikit-learn POT tqdm pytorch-lightning pydantic pandas
 </code></pre>
 
       <div class="note">

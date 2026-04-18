@@ -204,39 +204,64 @@ plt.show()
 
       <h2><span class="step-num">6</span> Using Task2Vec</h2>
       <p>
-        Task2Vec requires a pre-trained probe network (e.g., ResNet-18) and computes
-        the Fisher information matrix as a task embedding.
+        Task2Vec computes the diagonal of the <strong>Fisher Information Matrix</strong>
+        of a pre-trained probe network as a task embedding.
+        The library ships <code>ResNet</code> probes in <code>data_meta_map.models</code>
+        that already expose the required <code>.classifier</code> property.
       </p>
-<pre><code class="language-python">import torchvision.models as models
-from data_meta_map.task2vec.task2vec import Task2Vec
+<pre><code class="language-python">from data_meta_map.models import resnet18
+from data_meta_map.task2vec.task2vec import Task2Vec, task2vec
+from data_meta_map.task2vec.task_similarity import pdist
 
-# Load a pre-trained ResNet-18 as probe network
-probe = models.resnet18(pretrained=True)
+# Use the built-in ResNet-18 probe (already implements ProbeNetwork)
+probe = resnet18(pretrained=True)
 
-# Wrap it to expose the .classifier property
-class ProbeResNet(Task2Vec.ProbeNetwork if False else torch.nn.Module):
-    def __init__(self, base):
-        super().__init__()
-        self.base = base
-        self.fc   = base.fc  # final layer
+# Embed each dataset
+embeddings = [
+    task2vec(probe, ds, max_samples=500)
+    for ds in [cifar10, mnist, stl10]
+]
 
-    @property
-    def classifier(self):
-        return self.fc
+# Pairwise distances
+D = pdist(embeddings, distance="cosine")
+print("Distance matrix:\n", D)
+# [[0.    0.312 0.481]
+#  [0.312 0.    0.395]
+#  [0.481 0.395 0.   ]]
 
-    @classifier.setter
-    def classifier(self, val):
-        self.fc = val
-        self.base.fc = val
-
-    def forward(self, x):
-        return self.base(x)
-
-probe_net = ProbeResNet(probe)
-embedder  = Task2Vec(probe_net, max_samples=500)
+# Or use the class directly for more control
+embedder = Task2Vec(probe, max_samples=500, method="montecarlo")
 embedding = embedder.embed(cifar10)
+print("Hessian shape:", embedding.hessian.shape)
+</code></pre>
 
-print("Task2Vec hessian shape:", embedding.hessian.shape)
+      <h2><span class="step-num">7</span> Using Dataset2Vec</h2>
+      <p>
+        Dataset2Vec learns a permutation-invariant meta-feature extractor for
+        <strong>tabular datasets</strong> via contrastive training.
+      </p>
+<pre><code class="language-python">import torch
+from data_meta_map.models import get_model
+from data_meta_map.dataset2vec_embedder import Dataset2VecEmbedder
+
+# Build model with default config (output_size=16)
+model    = get_model("dataset2vec")
+embedder = Dataset2VecEmbedder(model, max_epochs=20, batch_size=32)
+
+# train_datasets: list of DataFrames / NDArrays (last column = target)
+embedder.fit(train_datasets)
+
+# Embed a new tabular dataset
+X = torch.randn(200, 10)   # 200 samples, 10 features
+y = torch.randint(0, 3, (200,)).float()
+
+vec = embedder.embed(X, y)
+print("Dataset2Vec embedding:", vec.shape)  # (16,)
+
+# Save / reload
+embedder.save("d2v.pt")
+embedder2 = Dataset2VecEmbedder(get_model("dataset2vec"))
+embedder2.load("d2v.pt")
 </code></pre>
 
       <div class="note">
