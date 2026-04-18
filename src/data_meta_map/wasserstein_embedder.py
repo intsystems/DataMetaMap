@@ -97,7 +97,7 @@ class WassersteinEmbedder(BaseEmbedder):
 
     def __init__(
         self,
-        emb_dim: int,
+        emb_dim: int = 2,
         device: Union[str, torch.device] = "cpu",
         max_samples: Optional[int] = None,
         batch_size: int = 64,
@@ -125,7 +125,11 @@ class WassersteinEmbedder(BaseEmbedder):
             sqrt_method: Method for matrix square root computation ('ns', 'eig').
             sqrt_niters: Number of iterations for Newton-Schulz method.
         """
-        super().__init__(emb_dim, device, max_samples, batch_size)
+        super().__init__()
+        self.emb_dim = emb_dim
+        self.device = torch.device(device) if isinstance(device, str) else device
+        self.max_samples = max_samples
+        self.batch_size = batch_size
         self.gaussian_assumption = gaussian_assumption
         self.diagonal_cov = diagonal_cov
         self.commute = commute
@@ -358,44 +362,60 @@ class WassersteinEmbedder(BaseEmbedder):
             class_offsets.append(class_offsets[-1] + len(local_offsets))
 
         total_classes = class_offsets[-1]
-        D = torch.zeros((total_classes, total_classes), device=self.device)
 
         # Step 2: Compute distances
-        for i in range(len(datasets)):
-            means_i, covs_i, offsets_i = dataset_stats[i]
-            start_i = class_offsets[i]
-            end_i = class_offsets[i + 1]
+        if self.gaussian_assumption and self.diagonal_cov:
+            # Vectorized path for diagonal Gaussian case — O(N²·d) via BLAS,
+            # avoids Python loops over class pairs.
+            all_means = torch.cat([s[0] for s in dataset_stats], dim=0)  # [N, d]
+            all_vars  = torch.cat([s[1] for s in dataset_stats], dim=0)  # [N, d]
 
-            for j in range(i if symmetric else 0, len(datasets)):
-                means_j, covs_j, offsets_j = dataset_stats[j]
-                start_j = class_offsets[j]
-                end_j = class_offsets[j + 1]
+            # Mean term: ||mu_i - mu_j||²
+            mean_sq = torch.cdist(all_means, all_means, p=2) ** 2  # [N, N]
 
-                for idx_i, local_i in enumerate(offsets_i):
-                    global_i = start_i + idx_i
+            # Bures term: Σ(var_i + var_j - 2√(var_i·var_j))
+            var_sums  = all_vars.sum(dim=1)                                   # [N]
+            sqrt_vars = torch.sqrt(all_vars + 1e-12)                          # [N, d]
+            cross     = sqrt_vars @ sqrt_vars.T                                # [N, N]
+            bures_mat = var_sums.unsqueeze(1) + var_sums.unsqueeze(0) - 2 * cross  # [N, N]
 
-                    for idx_j, local_j in enumerate(offsets_j):
-                        global_j = start_j + idx_j
+            D = torch.sqrt(torch.clamp(mean_sq + bures_mat, min=0.0))
+            if symmetric:
+                D = (D + D.T) / 2
+        else:
+            D = torch.zeros((total_classes, total_classes), device=self.device)
+            for i in range(len(datasets)):
+                means_i, covs_i, offsets_i = dataset_stats[i]
+                start_i = class_offsets[i]
 
-                        if self.gaussian_assumption:
-                            d = self._bures_wasserstein_distance(
-                                means_i[idx_i], covs_i[idx_i],
-                                means_j[idx_j], covs_j[idx_j]
-                            )
-                        else:
-                            X_i, Y_i = self._data_cache.get(
-                                i, self.preprocess_dataset(datasets[i], dataset_id=i))
-                            X_j, Y_j = self._data_cache.get(
-                                j, self.preprocess_dataset(datasets[j], dataset_id=j))
-                            samples_i = X_i[Y_i == local_i]
-                            samples_j = X_j[Y_j == local_j]
-                            d = self._exact_wasserstein_distance(
-                                samples_i, samples_j)
-                            d = torch.tensor(d, device=self.device)
+                for j in range(i if symmetric else 0, len(datasets)):
+                    means_j, covs_j, offsets_j = dataset_stats[j]
+                    start_j = class_offsets[j]
 
-                        D[global_i, global_j] = d
-                        if symmetric and i != j:
-                            D[global_j, global_i] = d
+                    for idx_i, local_i in enumerate(offsets_i):
+                        global_i = start_i + idx_i
+                        for idx_j, local_j in enumerate(offsets_j):
+                            global_j = start_j + idx_j
+
+                            if self.gaussian_assumption:
+                                d = self._bures_wasserstein_distance(
+                                    means_i[idx_i], covs_i[idx_i],
+                                    means_j[idx_j], covs_j[idx_j]
+                                )
+                            else:
+                                X_i, Y_i = self._data_cache.get(
+                                    i, self.preprocess_dataset(datasets[i], dataset_id=i))
+                                X_j, Y_j = self._data_cache.get(
+                                    j, self.preprocess_dataset(datasets[j], dataset_id=j))
+                                samples_i = X_i[Y_i == local_i]
+                                samples_j = X_j[Y_j == local_j]
+                                d = torch.tensor(
+                                    self._exact_wasserstein_distance(samples_i, samples_j),
+                                    device=self.device)
+
+                            D[global_i, global_j] = d
+                            if symmetric and i != j:
+                                D[global_j, global_i] = d
 
         return D
 
@@ -522,6 +542,10 @@ class WassersteinEmbedder(BaseEmbedder):
 
         task_embeddings_tensor = torch.stack(task_embeddings, dim=0)
         return task_embeddings_tensor, label_embeddings, augmented_datasets
+
+    def embed(self, datasets, **kwargs):
+        """Compute WTE embeddings — satisfies BaseEmbedder abstract interface."""
+        return self.compute_wte(datasets, **kwargs)
 
     def clear_cache(self) -> None:
         """Clear all caches to free memory."""
