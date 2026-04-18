@@ -24,6 +24,7 @@ jobs:
           pip install scikit-learn
           pip install tqdm
           pip install pandas
+          pip install lightning
           pip install -U pytest pytest-cov
           ls ./
 
