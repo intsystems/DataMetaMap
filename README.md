@@ -56,7 +56,21 @@ We need an ability to compare information similarity between various datasets. I
 
 ## 🛠️ Install
 
-TODO
+Requires Python 3.10+.
+
+Install from source:
+
+```bash
+git clone https://github.com/intsystems/DataMetaMap.git
+cd DataMetaMap
+pip install .
+```
+
+For development (editable install with test dependencies):
+
+```bash
+pip install -e ".[dev]"
+```
 
 ## 🚀 Quickstart 
 TODO
