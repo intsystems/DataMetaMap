@@ -1,7 +1,6 @@
 \documentclass[peerreview]{IEEEtran}
 \usepackage{cite}
 \usepackage{url}
-\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{booktabs}
 \usepackage{graphicx}
@@ -10,7 +9,6 @@
 \usepackage{amssymb}
 
 \hyphenation{op-tical net-works semi-conduc-tor meta-fea-ture meta-fea-tures}
-\emergencystretch=2em
 
 \begin{document}
 \title{DataMetaMap: A Library for Dataset Vector Representation}
@@ -37,15 +35,14 @@ meta-learning pipelines. We study four complementary approaches:
 Maximum Mean Discrepancy (MMD), Task2Vec, Dataset2Vec, and
 Wasserstein Task Embedding. The repository includes executable demos
 and benchmark pipelines for dataset similarity analysis,
-transfer-oriented retrieval, and warm-start hyperparameter
-optimization across heterogeneous datasets.
+transfer-oriented retrieval.
 \end{abstract}
 
 \section{Introduction}
 A fundamental challenge in modern machine learning is the efficient 
 transfer of knowledge across tasks and datasets. Given a new target 
 dataset, a practitioner must decide which pretrained model or which 
-prior learning experience is most relevant --- a decision that 
+prior learning experience is most relevant — a decision that 
 currently relies heavily on human intuition or exhaustive search.
 
 A principled solution requires the ability to \emph{compare} datasets 
@@ -80,7 +77,7 @@ PyTorch-compatible framework. Our contributions are:
     Wasserstein embedders together with a Task2Vec subpackage,
     shared utilities, and benchmark code.
     \item Experimental benchmarks for transfer-oriented dataset
-    retrieval and warm-start hyperparameter optimization.
+    retrieval.
     \item Method-specific demo notebooks illustrating training,
     visualization, and similarity analysis in the learned embedding
     spaces.
@@ -213,77 +210,45 @@ measured via the cosine distance between embeddings:
 \subsection{Dataset2Vec}
 
 \subsubsection*{Overview}
-Jomaa et al.~\cite{jomaa2021dataset2vec} propose Dataset2Vec, a 
-learned meta-feature extractor designed to replace hand-engineered 
-dataset statistics in meta-learning pipelines. The primary motivation 
-is that traditional engineered meta-features require expert domain 
-knowledge and cannot handle datasets with varying schemas, while 
-autoencoder-based alternatives are restricted to fixed-schema 
-datasets. Dataset2Vec addresses both limitations by representing any 
-tabular dataset as a hierarchical set --- specifically as a set of
-predictor/target pairs --- and processing it through a 
-permutation-invariant DeepSet architecture~\cite{zaheer2017deepsets}. 
-To overcome the scarcity of meta-labeled data, the authors introduce 
-an auxiliary meta-task called \emph{dataset similarity learning}, 
-which provides abundant self-supervised training signal by asking the 
-model to predict whether two subsampled batches originate from the 
-same dataset.
+Jomaa et al.~\cite{jomaa2021dataset2vec} propose Dataset2Vec, a learned meta-feature extractor designed to replace hand-engineered dataset statistics in meta-learning pipelines. The key motivation is that classical engineered meta-features require substantial domain expertise and do not generalize well to datasets with different schemas, while autoencoder-based approaches are typically limited to fixed-schema data. Dataset2Vec addresses both issues by viewing a tabular dataset as a hierarchical set: a set of predictor and target variables, where each variable is itself a set of instance values. This representation is then processed by a permutation-invariant DeepSet architecture~\cite{zaheer2017deepsets}. To mitigate the lack of meta-labeled data, the authors introduce an auxiliary self-supervised task called \emph{dataset similarity learning}, which asks the model to determine whether two subsampled batches come from the same dataset.
 
 \subsubsection*{Methodology}
-
-\paragraph{Architecture.}
-The meta-feature extractor is a three-module composition
+Dataset2Vec represents a tabular dataset as a hierarchical set of predictor and target variables, where each variable is itself a set of instance values. Let
+$D = (X^{(D)}, Y^{(D)}) \in \mathcal{D}$ denote a dataset, where
+$X^{(D)} \in \mathbb{R}^{N(D)\times M(D)}$ and
+$Y^{(D)} \in \mathbb{R}^{N(D)\times T(D)}$.
+The meta-feature extractor is modeled as a DeepSet-based architecture
 \begin{equation}
     \hat{\varphi} := h \circ g \circ f,
 \end{equation}
-where $f$ maps individual predictor/target pairs to embeddings, $g$
-aggregates those embeddings via pooling, and $h$ maps the pooled
-representation to the final meta-feature vector. Each module is a
-stack of fully-connected layers with residual connections and ReLU
-activations. (Within this subsection, the symbols $f, g, h$ refer
-exclusively to the Dataset2Vec sub-networks.)
-
-\paragraph{Multi-fidelity batch sampling.}
-Meta-features are estimated from random multi-fidelity subsets. 
-Given dataset $D$ with $N$ instances, $M$ predictors, and $T$ 
-targets, a batch is drawn by sampling index subsets
+where $f$ embeds individual predictor/target pairs, $g$ aggregates embeddings through pooling, and $h$ produces the final dataset representation. The resulting embedding can be written as
 \begin{equation}
-    N' \sim \{2^{q} \mid q \in [4, 8]\}, \quad
-    M' \sim [1, M], \quad
-    T' \sim [1, T],
+\hat{\varphi}(D)
+:=
+h\left(
+\frac{1}{M(D)T(D)}
+\sum_{m=1}^{M(D)} \sum_{t=1}^{T(D)}
+g\left(
+\frac{1}{N(D)}
+\sum_{n=1}^{N(D)}
+f\bigl(X^{(D)}_{n,m}, Y^{(D)}_{n,t}\bigr)
+\right)
+\right).
 \end{equation}
-uniformly without replacement. The dataset-level meta-feature vector
-is estimated as the average of $B$ batch-level estimates:
+
+To improve robustness and support datasets of varying sizes, embeddings are estimated from random multi-fidelity batches obtained by subsampling instances, predictors, and targets. The final dataset-level representation is computed as the average of multiple batch-level embeddings:
 \begin{equation}
     \hat{\varphi}(D)
     := \frac{1}{B} \sum_{b=1}^{B}
     \hat{\varphi}\bigl(\mathrm{sample\text{-}batch}(D)\bigr).
 \end{equation}
 
-\paragraph{Dataset similarity learning.}
-The auxiliary training task asks the model to determine whether two 
-batches $D_s$ and $D_s'$ originate from the same dataset. The 
-probabilistic similarity model is
+Training is performed using an auxiliary self-supervised task called dataset similarity learning. Given two batches $D_s$ and $D_s'$, the model predicts whether they originate from the same dataset using
 \begin{equation}
     \hat{i}(D_s, D_s')
     := \exp\bigl(-\gamma\,\|\hat{\varphi}(D_s) - \hat{\varphi}(D_s')\|\bigr),
 \end{equation}
-and the training objective is a symmetric binary cross-entropy:
-\begin{equation}
-\begin{aligned}
-    \min_{\hat{\varphi}} \;
-    & -\frac{1}{|\mathcal{P}|}
-        \sum_{(D_s, D_s') \in \mathcal{P}}
-        \log \hat{i}(D_s, D_s') \\
-    & -\frac{1}{|\mathcal{W}|}
-        \sum_{(D_s, D_s') \in \mathcal{W}}
-        \log\bigl(1 - \hat{i}(D_s, D_s')\bigr),
-\end{aligned}
-\end{equation}
-where $\mathcal{P}$ and $\mathcal{W}$ are the sets of similar and
-dissimilar batch pairs, respectively.
-
-%------------------------------------------------------------
+and optimizes a symmetric binary cross-entropy objective over similar and dissimilar batch pairs.
 \subsection{Wasserstein Task Embedding}
 
 \subsubsection*{Overview}
@@ -406,9 +371,9 @@ followed a systematic approach:
 
 \subsection{Repository Structure}
 The repository is organized into three main layers. The
-\path{src/} directory contains reusable library components, the
-\path{benchmarks/} directory contains executable evaluation
-pipelines, and the \path{demo/} directory provides lightweight
+\texttt{src/} directory contains reusable library components, the
+\texttt{benchmarks/} directory contains executable evaluation
+pipelines, and the \texttt{demo/} directory provides lightweight
 notebooks for qualitative inspection of the methods. In addition, the
 project includes unit tests for the main embedder modules and
 continuous-integration workflows for automated testing and
@@ -416,22 +381,10 @@ documentation deployment.
 
 \subsection{Benchmarking Pipelines in the Repository}
 The public code base already contains concrete benchmark logic for
-three practical use cases of dataset embeddings.
-
-\paragraph{Dataset2Vec warm-start HPO benchmark.}
-The benchmark in \path{benchmarks/dataset2vec_hpo/} constructs a
-small surrogate hyperparameter-optimization environment over tabular
-classification tasks. It combines four standard datasets
-(\texttt{iris}, \texttt{wine}, \texttt{breast\_cancer},
-\texttt{digits}) with four synthetic datasets and evaluates a grid of
-108 MLP hyperparameter configurations. For each held-out target
-dataset, three strategies are compared: cold-start random search,
-warm start from engineered statistical meta-features, and warm start
-from Dataset2Vec embeddings. Performance is summarized with the ADTM
-(Average Distance to the Minimum) metric over multiple random seeds.
+two practical use cases of dataset embeddings.
 
 \paragraph{Task2Vec transfer-selection benchmark.}
-The notebook \path{benchmarks/pretrain_benchmark/apply_benchmark.ipynb}
+The notebook \texttt{apply\_benchmark.ipynb}
 uses Task2Vec embeddings to retrieve the nearest source dataset for a
 given target image task. The benchmark operates on datasets such as
 \texttt{mnist}, \texttt{cifar10}, \texttt{cifar100},
@@ -443,7 +396,7 @@ pretraining baselines.
 
 \paragraph{Wasserstein transfer-selection benchmark.}
 The notebook
-\path{benchmarks/pretrain_benchmark/wasserstein/benchmark_wasserstein.ipynb}
+\texttt{benchmark\_wasserstein.ipynb}
 implements a similar transfer-selection experiment using
 Wasserstein-based dataset distances. It first computes class-wise
 Bures--Wasserstein distances, derives dataset-level distances from the
@@ -464,47 +417,23 @@ The repository also includes method-specific notebooks intended for
 qualitative validation and onboarding.
 
 \paragraph{Task2Vec demo.}
-The notebook \path{demo/task2vec/simple_example.ipynb} embeds a
+The notebook \texttt{demo/task2vec/simple\_example.ipynb} embeds a
 small collection of image datasets with a pretrained
 \texttt{ResNet-18} probe and visualizes the resulting task distances
 with a clustered similarity matrix.
 
 \paragraph{Dataset2Vec demo.}
-The notebook \path{demo/dataset2vec/simple_example.ipynb}
+The notebook \texttt{demo/dataset2vec/simple\_example.ipynb}
 constructs a balanced synthetic tabular meta-dataset, trains a
 Dataset2Vec encoder, and studies the resulting embeddings using
 PCA/t-SNE projections together with nearest-centroid classification in
 embedding space.
 
 \paragraph{Wasserstein demo.}
-The notebook \path{demo/wasserstein/simple_example1 (1).ipynb}
+The notebook \texttt{demo/wasserstein/simple\_example1 (1).ipynb}
 demonstrates the full Wasserstein pipeline: computation of pairwise
 class distances, MDS-based label embeddings, augmentation of the
 feature space, and construction of reference-based task embeddings.
-
-\section{Analysis and Interpretation}
-At the current stage, the repository is strongest not in frozen
-numeric tables but in reproducible experimental pipelines. The
-available scripts already support three central empirical questions:
-(i) whether embeddings recover meaningful nearest-neighbor datasets,
-(ii) whether those neighbors improve source-task selection for transfer
-learning, and (iii) whether learned meta-features reduce the burn-in
-cost of hyperparameter search.
-
-The benchmark organization also reveals a practical division of roles
-between the methods. Dataset2Vec is the main tabular meta-feature
-learner and is currently tied to the most complete HPO benchmark.
-Task2Vec is used primarily for image-task retrieval through
-probe-network Fisher embeddings, while Wasserstein embedding emphasizes
-geometry-aware dataset comparison through optimal transport. This is a
-useful point to state explicitly in the report, because it explains
-why the benchmarking suite is method specific rather than perfectly
-uniform across all algorithms.
-
-When the final experimental runs are completed, this section can be
-extended with the exact artifacts already anticipated by the
-repository: ADTM curves for HPO, dataset-to-dataset distance heatmaps,
-and nearest-neighbor transfer recommendation tables.
 
 \section{Conclusions and Recommendations}
 \texttt{DataMetaMap} provides a growing toolkit for dataset
@@ -540,10 +469,6 @@ are divided into the following groups:
     \item \textbf{Wasserstein Embedding Demo}: A compact notebook
     computes class-wise Bures--Wasserstein distances, label embeddings,
     and final task embeddings for small image-dataset collections.
-    \item \textbf{Hyperparameter-Optimization Benchmark}: An
-    end-to-end script compares random search, warm start from
-    engineered meta-features, and warm start from Dataset2Vec
-    embeddings under the ADTM metric.
     \item \textbf{Transfer-Based Benchmark Notebooks}: Separate
     notebooks evaluate Task2Vec and Wasserstein retrieval as heuristics
     for choosing a source pretraining dataset before downstream

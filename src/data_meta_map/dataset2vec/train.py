@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Mapping
 
-import pytorch_lightning as pl
 import torch
 from torch import Tensor, optim
 from torch.optim.lr_scheduler import LinearLR
@@ -9,7 +8,38 @@ from torch.optim.lr_scheduler import LinearLR
 from .config import OptimizerConfig
 
 
-class LightningBase(pl.LightningModule, ABC):
+try:
+    import pytorch_lightning as pl  # type: ignore
+except Exception:  # pragma: no cover
+    # Optional dependency: the library can still be imported and used for
+    # embedding with pre-trained weights even if Lightning (or its transitive
+    # deps) is not available in the runtime.
+    pl = None  # type: ignore
+
+
+if pl is None:  # pragma: no cover
+    class _LightningModuleFallback(torch.nn.Module):
+        """Minimal subset of LightningModule API used by this project."""
+
+        def save_hyperparameters(self, *args: Any, **kwargs: Any) -> None:
+            return None
+
+        def log(self, *args: Any, **kwargs: Any) -> None:
+            return None
+
+        @property
+        def device(self) -> torch.device:
+            # Keep behavior close to Lightning: default to cpu if the module
+            # is not moved to a device explicitly.
+            return next(self.parameters(), torch.empty(0)).device
+
+
+    _LightningBaseParent = _LightningModuleFallback
+else:
+    _LightningBaseParent = pl.LightningModule
+
+
+class LightningBase(_LightningBaseParent, ABC):
 
     def __init__(self, optimizer_config: OptimizerConfig = OptimizerConfig()):
         super().__init__()
