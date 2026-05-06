@@ -2,7 +2,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import pytorch_lightning as pl
 from numpy.typing import NDArray
 from torch import Tensor
 
@@ -93,6 +92,8 @@ class Dataset2VecEmbedder(BaseEmbedder):
         Returns:
             self
         """
+        import pytorch_lightning as pl
+
         train_loader = Dataset2VecLoader(
             batch_size=self.batch_size,
             n_batches=self.n_batches,

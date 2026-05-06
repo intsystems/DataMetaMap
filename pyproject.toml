@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "data_meta_map"
-version = "0.1.0"
+version = "0.1.1"
 description = "Library for representing datasets in a unified vector space for similarity comparison."
 readme = "README.md"
 license = { file = "LICENSE" }
@@ -41,6 +41,10 @@ dependencies = [
 dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
+]
+viz = [
+    "matplotlib>=3.7",
+    "seaborn>=0.13",
 ]
 
 [project.urls]
