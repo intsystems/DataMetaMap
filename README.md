@@ -40,7 +40,7 @@
 ## 📬 Assets
 
 1. [Technical Meeting 1 - Presentation](https://github.com/intsystems/DataMetaMap/blob/master/assets/BMM_technical_1.pdf)
-2. [Blog Post](https://data-meta-map.hashnode.dev/metamap-your-compass-for-navigating-the-universe-of-machine-learning-tasks)
+2. [Blog Post](https://github.com/intsystems/DataMetaMap/edit/meshkovvl/BLOGPOST.md)
 3. [Technical Report](https://github.com/intsystems/DataMetaMap/blob/develop/report/data_meta_map.pdf)
 
 
