@@ -17,6 +17,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install torch
+          pip install torchvision
           pip install gymnasium
           pip install pyro-ppl
           pip install POT
@@ -31,7 +32,7 @@ jobs:
 
       - name: Testing
         run: |
-          PYTHONPATH=src/ pytest tests/ --cov=data_meta_map --cov-report=xml
+          PYTHONPATH=src/ pytest tests/ --cov=src --cov-report=xml
 
       - name: Generate coverage badge
         run: |
