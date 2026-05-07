@@ -1,0 +1,481 @@
+\documentclass[peerreview]{IEEEtran}
+\usepackage{cite}
+\usepackage{url}
+\usepackage[utf8]{inputenc}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\hyphenation{op-tical net-works semi-conduc-tor meta-fea-ture meta-fea-tures}
+
+\begin{document}
+\title{DataMetaMap: A Library for Dataset Vector Representation}
+
+\author{Vladislav Minashkin, Ivan Papay, Vladislav Meshkov, Ilya Stepanov \\
+\textbf{Intelligent Systems} \\
+\textbf{MIPT 2025}}
+
+\date{2025}
+
+\maketitle
+\tableofcontents
+\listoffigures
+
+\IEEEpeerreviewmaketitle
+
+\begin{abstract}
+This report presents \textit{DataMetaMap}, a Python library designed to 
+represent multiple datasets in a unified vector space, enabling principled 
+comparison of dataset similarity. The library offers a comprehensive suite 
+of dataset embedding techniques compatible with PyTorch, addressing the 
+challenge of transferring knowledge across datasets with varying schemas in 
+meta-learning pipelines. We study four complementary approaches:
+Maximum Mean Discrepancy (MMD), Task2Vec, Dataset2Vec, and
+Wasserstein Task Embedding. The repository includes executable demos
+and benchmark pipelines for dataset similarity analysis,
+transfer-oriented retrieval.
+\end{abstract}
+
+\section{Introduction}
+A fundamental challenge in modern machine learning is the efficient 
+transfer of knowledge across tasks and datasets. Given a new target 
+dataset, a practitioner must decide which pretrained model or which 
+prior learning experience is most relevant — a decision that 
+currently relies heavily on human intuition or exhaustive search.
+
+A principled solution requires the ability to \emph{compare} datasets 
+quantitatively: if datasets can be embedded into a common vector space 
+where geometric proximity reflects task similarity, then finding the 
+most relevant prior experience reduces to a nearest-neighbor query. 
+Such embeddings, often called \emph{meta-features} or \emph{task 
+embeddings}, form the foundation of data-driven meta-learning.
+
+Existing approaches to dataset representation span a wide spectrum. 
+Classical engineered meta-features (number of instances, class 
+imbalance, statistical moments of features) are cheap to compute but 
+have limited expressivity and require schema-specific design. 
+Kernel-based methods such as Maximum Mean Discrepancy (MMD) provide
+distribution-level comparisons without parametric assumptions but
+scale poorly with dimensionality. More recent neural and
+geometry-aware approaches --- Task2Vec, Dataset2Vec, and Wasserstein
+Task Embedding --- learn rich, task-agnostic representations but
+differ substantially in their inductive biases, computational cost,
+and applicability 
+to datasets with varying schemas.
+
+We present \texttt{DataMetaMap}, a unified Python library that 
+combines these dataset embedding methods within a practical,
+PyTorch-compatible framework. Our contributions are:
+
+\begin{itemize}
+    \item A unified overview of four families of dataset comparison
+    methods: MMD, Task2Vec, Dataset2Vec, and Wasserstein Task
+    Embedding.
+    \item A clean, extensible repository packaging Dataset2Vec and
+    Wasserstein embedders together with a Task2Vec subpackage,
+    shared utilities, and benchmark code.
+    \item Experimental benchmarks for transfer-oriented dataset
+    retrieval.
+    \item Method-specific demo notebooks illustrating training,
+    visualization, and similarity analysis in the learned embedding
+    spaces.
+\end{itemize}
+
+\section{Notation and Conventions}
+We adopt the following notation throughout this report.
+
+\paragraph{Datasets and meta-datasets.}
+A dataset is denoted $D = (X, Y)$, where
+$X \in \mathbb{R}^{N \times M}$ is the predictor matrix and
+$Y \in \mathbb{R}^{N \times T}$ is the target matrix; $N$, $M$, and
+$T$ are the number of instances, predictors, and targets,
+respectively. A \emph{meta-dataset} is a collection
+$\mathcal{D}_{\mathrm{meta}} = \{D_1, \dots, D_K\}$ of (possibly
+heterogeneous) datasets used for meta-training or evaluation.
+
+\paragraph{Meta-features.}
+A \emph{meta-feature extractor} is a map
+$\varphi : \mathcal{D} \to \mathbb{R}^{d}$ that assigns to every
+dataset a fixed-dimensional embedding $\varphi(D) \in \mathbb{R}^{d}$.
+When the extractor is itself a learned (estimated) object, we write
+$\hat{\varphi}$. For methods based on stochastic batch sampling,
+$D_s$ and $D_s'$ denote multi-fidelity subsets (batches) drawn from
+$D$ by subsampling instances, predictors, and targets.
+
+\paragraph{Probe networks.}
+For Task2Vec, we additionally introduce a \emph{probe network} with
+parameters $\theta \in \mathbb{R}^{P}$ that is briefly fine-tuned on
+the target dataset. The Fisher Information Matrix (FIM) of the probe
+parameters is denoted $F(\theta) \in \mathbb{R}^{P \times P}$.
+
+\paragraph{Distributional and kernel quantities.}
+We write $k(\cdot, \cdot)$ for a positive-definite kernel (e.g.~RBF),
+$\mu_P, \mu_Q$ for kernel mean embeddings of distributions $P$ and $Q$
+in a reproducing kernel Hilbert space (RKHS) $\mathcal{H}$, and
+$W_p(P, Q)$ for the $p$-Wasserstein distance. In the Wasserstein Task
+Embedding section, $\psi$ denotes the MDS map used to embed
+class-label distributions into a Euclidean space.
+
+\paragraph{Hyperparameters.}
+Throughout, $\gamma > 0$ denotes a bandwidth or scaling
+hyperparameter for similarity models, and $\tau > 0$ a temperature
+parameter where applicable. The binary indicator $i \in \{0, 1\}$
+marks whether two batches originate from the same dataset ($i = 1$)
+or not ($i = 0$).
+
+\section{Proposed Solutions}
+
+\subsection{Maximum Mean Discrepancy (MMD)}
+
+\subsubsection*{Overview}
+Gretton et al.~\cite{gretton2012kernel} introduced the Maximum Mean
+Discrepancy as a non-parametric, kernel-based measure of the distance
+between two probability distributions. Originally proposed as a
+principled two-sample test, MMD operates by embedding distributions
+into a reproducing kernel Hilbert space (RKHS) and measuring the
+distance between their mean embeddings. The result is a scalar
+dissimilarity score that can serve directly as a dataset distance
+measure, without requiring an explicit parametric model.
+
+\subsubsection*{Methodology}
+Given two distributions $P$ and $Q$ with samples
+$\{x_i\}_{i=1}^{m} \sim P$ and $\{y_j\}_{j=1}^{n} \sim Q$, the
+squared MMD in an RKHS $\mathcal{H}$ induced by kernel $k$ is
+\begin{equation}
+    \mathrm{MMD}^2(P, Q)
+    = \bigl\|\mu_P - \mu_Q\bigr\|_{\mathcal{H}}^{2},
+\end{equation}
+where $\mu_P = \mathbb{E}_{x \sim P}[k(x, \cdot)]$ is the kernel mean
+embedding of $P$. An unbiased empirical estimator is
+\begin{equation}
+\begin{aligned}
+    \widehat{\mathrm{MMD}}^2(P, Q)
+    &= \frac{1}{m(m-1)} \sum_{i \neq i'} k(x_i, x_{i'}) \\
+    &\quad + \frac{1}{n(n-1)} \sum_{j \neq j'} k(y_j, y_{j'}) \\
+    &\quad - \frac{2}{mn} \sum_{i, j} k(x_i, y_j).
+\end{aligned}
+\end{equation}
+For dataset comparison, $P$ and $Q$ are taken as the empirical
+distributions of two datasets $D$ and $D'$, and
+$\widehat{\mathrm{MMD}}^2(D, D')$ is used as their dissimilarity
+score. A common choice is the RBF kernel
+$k(x, y) = \exp\bigl(-\|x - y\|^{2} / (2\sigma^{2})\bigr)$ with
+bandwidth $\sigma$ selected via the median heuristic.
+
+\subsection{Task2Vec}
+
+\subsubsection*{Overview}
+Achille et al.~\cite{achille2019task2vec} propose Task2Vec, a method 
+for embedding machine learning tasks into a fixed-dimensional vector 
+space such that geometric distances between embeddings reflect 
+meaningful task similarity. The core idea is to use the diagonal of 
+the Fisher Information Matrix (FIM) of a pretrained \emph{probe
+network} --- a fixed feature extractor briefly fine-tuned on the
+target task --- as the task embedding. This captures the sensitivity
+of the probe's parameters to the task's data distribution, producing 
+embeddings that are stable, comparable across tasks, and correlated 
+with transfer learning performance.
+
+\subsubsection*{Methodology}
+Given a dataset $D = (X, Y)$ and a probe network with parameters
+$\theta$, the probe is fine-tuned on $D$ by minimizing the task loss
+$\mathcal{L}(\theta; D)$. The Task2Vec embedding is the diagonal of
+the empirical Fisher Information Matrix:
+\begin{equation}
+    \varphi(D)
+    := \mathrm{diag}\bigl(\hat{F}(\theta)\bigr)
+    \in \mathbb{R}^{P},
+\end{equation}
+where the empirical FIM diagonal is estimated as
+\begin{equation}
+    \hat{F}_{ii}(\theta)
+    = \frac{1}{N} \sum_{n=1}^{N}
+    \left(
+        \frac{\partial \log p(y_n \mid x_n, \theta)}
+             {\partial \theta_i}
+    \right)^{2}.
+\end{equation}
+The resulting embedding $\varphi(D)$ encodes which parameters of the 
+probe are most activated by dataset $D$. Task similarity is then 
+measured via the cosine distance between embeddings:
+\begin{equation}
+    d(D, D')
+    = 1 - \frac{\varphi(D)^{\top} \varphi(D')}
+                {\|\varphi(D)\| \cdot \|\varphi(D')\|}.
+\end{equation}
+
+%------------------------------------------------------------
+\subsection{Dataset2Vec}
+
+\subsubsection*{Overview}
+Jomaa et al.~\cite{jomaa2021dataset2vec} propose Dataset2Vec, a learned meta-feature extractor designed to replace hand-engineered dataset statistics in meta-learning pipelines. The key motivation is that classical engineered meta-features require substantial domain expertise and do not generalize well to datasets with different schemas, while autoencoder-based approaches are typically limited to fixed-schema data. Dataset2Vec addresses both issues by viewing a tabular dataset as a hierarchical set: a set of predictor and target variables, where each variable is itself a set of instance values. This representation is then processed by a permutation-invariant DeepSet architecture~\cite{zaheer2017deepsets}. To mitigate the lack of meta-labeled data, the authors introduce an auxiliary self-supervised task called \emph{dataset similarity learning}, which asks the model to determine whether two subsampled batches come from the same dataset.
+
+\subsubsection*{Methodology}
+Dataset2Vec represents a tabular dataset as a hierarchical set of predictor and target variables, where each variable is itself a set of instance values. Let
+$D = (X^{(D)}, Y^{(D)}) \in \mathcal{D}$ denote a dataset, where
+$X^{(D)} \in \mathbb{R}^{N(D)\times M(D)}$ and
+$Y^{(D)} \in \mathbb{R}^{N(D)\times T(D)}$.
+The meta-feature extractor is modeled as a DeepSet-based architecture
+\begin{equation}
+    \hat{\varphi} := h \circ g \circ f,
+\end{equation}
+where $f$ embeds individual predictor/target pairs, $g$ aggregates embeddings through pooling, and $h$ produces the final dataset representation. The resulting embedding can be written as
+\begin{equation}
+\hat{\varphi}(D)
+:=
+h\left(
+\frac{1}{M(D)T(D)}
+\sum_{m=1}^{M(D)} \sum_{t=1}^{T(D)}
+g\left(
+\frac{1}{N(D)}
+\sum_{n=1}^{N(D)}
+f\bigl(X^{(D)}_{n,m}, Y^{(D)}_{n,t}\bigr)
+\right)
+\right).
+\end{equation}
+
+To improve robustness and support datasets of varying sizes, embeddings are estimated from random multi-fidelity batches obtained by subsampling instances, predictors, and targets. The final dataset-level representation is computed as the average of multiple batch-level embeddings:
+\begin{equation}
+    \hat{\varphi}(D)
+    := \frac{1}{B} \sum_{b=1}^{B}
+    \hat{\varphi}\bigl(\mathrm{sample\text{-}batch}(D)\bigr).
+\end{equation}
+
+Training is performed using an auxiliary self-supervised task called dataset similarity learning. Given two batches $D_s$ and $D_s'$, the model predicts whether they originate from the same dataset using
+\begin{equation}
+    \hat{i}(D_s, D_s')
+    := \exp\bigl(-\gamma\,\|\hat{\varphi}(D_s) - \hat{\varphi}(D_s')\|\bigr),
+\end{equation}
+and optimizes a symmetric binary cross-entropy objective over similar and dissimilar batch pairs.
+\subsection{Wasserstein Task Embedding}
+
+\subsubsection*{Overview}
+Wasserstein Task Embedding (WTE) \emph{Liu et al. (2022)} is a
+model-agnostic task representation method for supervised
+classification that combines multidimensional scaling (MDS) with
+Wasserstein embedding. The main idea is to represent every task as a
+probability measure in an augmented space where the label information
+is first embedded into a Euclidean vector space and then concatenated
+with the input samples. This makes it possible to approximate a
+hierarchical optimal transport dataset distance with a standard
+Euclidean distance between task vectors.
+
+Compared with pairwise optimal transport methods such as OTDD, WTE is
+designed to be substantially faster when many tasks need to be
+compared repeatedly. The paper shows that the resulting task
+distances are strongly correlated with both forward transfer and
+catastrophic forgetting, while also remaining highly correlated with
+OTDD on benchmark task groups.
+
+\subsubsection*{Methodology}
+Let a task be given by a supervised dataset
+$\tau = \{(x_n, y_n)\}_{n=1}^{N}$ with inputs $x_n \in \mathbb{R}^{d}$ and
+labels $y_n \in \mathcal{Y}$. WTE first defines a label-to-label
+distance matrix using the 2-Wasserstein distance between label
+distributions. Following the simplification used in the paper, each
+class-conditional label distribution $\nu_y$ is approximated by a
+Gaussian, so that the distance between labels can be written in
+closed form as the Bures--Wasserstein distance:
+\begin{equation}
+W_2^2(\nu_y, \nu_{y'})
+=
+\|u_y - u_{y'}\|_2^2
++
+\operatorname{Tr}\!\left(
+\Sigma_y + \Sigma_{y'}
+- 2(\Sigma_y^{1/2}\Sigma_{y'}\Sigma_y^{1/2})^{1/2}
+\right),
+\end{equation}
+where $u_y$ and $\Sigma_y$ denote the mean and covariance of the
+Gaussian associated with label $y$.
+
+The resulting pairwise label distances are then embedded into a
+low-dimensional Euclidean space using multidimensional scaling.
+Denoting the MDS map by $\psi$, each label $y$ is mapped to a vector
+$\psi(\nu_y) \in \mathbb{R}^{l}$, where $l$ is chosen as a compromise
+between accuracy and computational cost. This gives the
+approximation
+\begin{equation}
+W_2^2(\nu_y, \nu_{y'})
+\approx
+\|\psi(\nu_y) - \psi(\nu_{y'})\|_2^2.
+\end{equation}
+
+After label embedding, each original sample-label pair is converted
+to an augmented vector
+\begin{equation}
+[x, \psi(\nu_y)] \in \mathbb{R}^{d+l}.
+\end{equation}
+The original task is therefore transformed into an updated point
+cloud in the augmented space, and the task distance becomes
+\begin{equation}
+d_{\tau}\bigl((x,y),(x',y')\bigr)
+\approx
+\left\|
+[x, \psi(\nu_y)] - [x', \psi(\nu_{y'})]
+\right\|_2.
+\end{equation}
+In this representation, the label discrepancy is absorbed into the
+feature space, allowing the task comparison problem to be reduced to a
+standard Wasserstein embedding problem.
+
+To obtain the final task vector, WTE applies the Wasserstein
+embedding framework with respect to a fixed reference measure
+$\mu_0$. For each task distribution $\mu_i$ over the augmented
+samples, an optimal transport map $T_i$ from $\mu_0$ to $\mu_i$ is
+approximated, and the embedding is defined as
+\begin{equation}
+\Phi(\mu_i) = (T_i - \mathrm{id})\sqrt{p_0},
+\end{equation}
+or, in the discrete setting used in the implementation,
+\begin{equation}
+\Phi(X_i) = \frac{T_i - X_0}{\sqrt{N_0}},
+\end{equation}
+where $X_0$ denotes the reference sample set and $N_0$ is its size.
+The Euclidean distance between the embedded task vectors then
+approximates the 2-Wasserstein distance between tasks:
+\begin{equation}
+\|\Phi(\mu_i) - \Phi(\mu_j)\|_2 \approx W_2(\mu_i, \mu_j).
+\end{equation}
+
+Algorithmically, WTE proceeds in three steps: (1) compute the label
+distance matrix, (2) embed labels with MDS, and (3) apply
+Wasserstein embedding to the augmented task distributions. The paper
+reports that this pipeline reduces the cost of task comparison from
+pairwise optimal transport over all task pairs to a single transport
+computation per task against the reference measure, which is the main
+source of the computational gain.
+
+%------------------------------------------------------------
+
+\section{Research Methodology}
+Our research methodology involved comprehensive implementation and 
+experimental validation of each dataset embedding technique. We 
+followed a systematic approach:
+
+\begin{itemize}
+    \item \textbf{Library Design}: We built a unified PyTorch-compatible 
+    interface where each embedding method is implemented as a 
+    self-contained module with consistent \texttt{fit()} and 
+    \texttt{embed()} methods.
+    \item \textbf{Algorithm Implementation}: Each method was implemented 
+    as a separate class following a common base interface, enabling 
+    straightforward benchmarking and extension.
+    \item \textbf{Experimental Validation}: We conducted controlled 
+    experiments on standard meta-dataset benchmarks to evaluate 
+    embedding quality, dataset similarity retrieval accuracy, and 
+    downstream meta-learning performance.
+\end{itemize}
+
+\subsection{Repository Structure}
+The repository is organized into three main layers. The
+\texttt{src/} directory contains reusable library components, the
+\texttt{benchmarks/} directory contains executable evaluation
+pipelines, and the \texttt{demo/} directory provides lightweight
+notebooks for qualitative inspection of the methods. In addition, the
+project includes unit tests for the main embedder modules and
+continuous-integration workflows for automated testing and
+documentation deployment.
+
+\subsection{Benchmarking Pipelines in the Repository}
+The public code base already contains concrete benchmark logic for
+two practical use cases of dataset embeddings.
+
+\paragraph{Task2Vec transfer-selection benchmark.}
+The notebook \texttt{apply\_benchmark.ipynb}
+uses Task2Vec embeddings to retrieve the nearest source dataset for a
+given target image task. The benchmark operates on datasets such as
+\texttt{mnist}, \texttt{cifar10}, \texttt{cifar100},
+\texttt{letters}, and \texttt{kmnist}, computes embeddings with a
+pretrained \texttt{ResNet-18} probe network, and then compares the
+retrieval-based recommendation against logged pretrain-to-task
+transfer results. The same notebook also defines random and large
+pretraining baselines.
+
+\paragraph{Wasserstein transfer-selection benchmark.}
+The notebook
+\texttt{benchmark\_wasserstein.ipynb}
+implements a similar transfer-selection experiment using
+Wasserstein-based dataset distances. It first computes class-wise
+Bures--Wasserstein distances, derives dataset-level distances from the
+resulting embeddings, and then recommends the closest source dataset
+for each target task. When transfer logs are available, the notebook
+compares these recommendations with observed downstream accuracies.
+
+\paragraph{Status of MMD in the repository.}
+MMD is retained in this report as an important classical baseline and
+as part of the conceptual comparison framework. At the same time, the
+current public repository places its strongest executable emphasis on
+Dataset2Vec, Task2Vec, and Wasserstein components, including demos and
+benchmark notebooks. Packaging MMD as a first-class module would be a
+natural next step for future development.
+
+\subsection{Demonstration Notebooks}
+The repository also includes method-specific notebooks intended for
+qualitative validation and onboarding.
+
+\paragraph{Task2Vec demo.}
+The notebook \texttt{demo/task2vec/simple\_example.ipynb} embeds a
+small collection of image datasets with a pretrained
+\texttt{ResNet-18} probe and visualizes the resulting task distances
+with a clustered similarity matrix.
+
+\paragraph{Dataset2Vec demo.}
+The notebook \texttt{demo/dataset2vec/simple\_example.ipynb}
+constructs a balanced synthetic tabular meta-dataset, trains a
+Dataset2Vec encoder, and studies the resulting embeddings using
+PCA/t-SNE projections together with nearest-centroid classification in
+embedding space.
+
+\paragraph{Wasserstein demo.}
+The notebook \texttt{demo/wasserstein/simple\_example1 (1).ipynb}
+demonstrates the full Wasserstein pipeline: computation of pairwise
+class distances, MDS-based label embeddings, augmentation of the
+feature space, and construction of reference-based task embeddings.
+
+\section{Conclusions and Recommendations}
+\texttt{DataMetaMap} provides a growing toolkit for dataset
+representation and comparison. In its current public form, the
+repository combines packaged Dataset2Vec and Wasserstein embedders, a
+Task2Vec subpackage, theoretical coverage of MMD as a classical
+baseline, and benchmark notebooks for transfer and meta-learning
+scenarios.
+
+The existing benchmark suite is designed to test the hypothesis that
+learned embeddings capture richer dataset structure than purely
+distributional baselines, especially when schemas vary across tasks.
+We encourage further work on standardizing the benchmarking interface
+across all methods, extending the released result tables with fully
+reproducible numeric comparisons, and turning MMD into a packaged
+executable component of the library.
+
+\appendices
+\section{Demo Experiments}
+Our demo code is available at the GitHub repository. The experiments 
+are divided into the following groups:
+
+\begin{itemize}
+    \item \textbf{Task2Vec Similarity Demo}: A notebook that embeds
+    \texttt{mnist}, \texttt{cifar10}, \texttt{cifar100}, and
+    \texttt{letters} with a pretrained \texttt{ResNet-18} probe and
+    visualizes the resulting task-distance matrix.
+    \item \textbf{Dataset2Vec Training and Visualization Demo}: A
+    synthetic tabular meta-dataset is generated, a Dataset2Vec model
+    is trained on balanced train/validation/test splits, and the
+    learned representations are explored with PCA/t-SNE projections
+    and nearest-centroid classification.
+    \item \textbf{Wasserstein Embedding Demo}: A compact notebook
+    computes class-wise Bures--Wasserstein distances, label embeddings,
+    and final task embeddings for small image-dataset collections.
+    \item \textbf{Transfer-Based Benchmark Notebooks}: Separate
+    notebooks evaluate Task2Vec and Wasserstein retrieval as heuristics
+    for choosing a source pretraining dataset before downstream
+    fine-tuning.
+\end{itemize}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

@@ -1,0 +1,39 @@
+seed: 42
+device: cuda
+
+model:
+  name: resnet18        # resnet18 | resnet34
+  pretrained: true
+  
+pretrain_only: false
+need_pretrain: true
+use_basic_model: false
+
+pretrain_dataset_name: stl10 # mnist | cifar10 | cifar100 | letters | kmnist
+task_dataset_name: mnist # mnist | cifar10 | cifar100 | letters | kmnist
+
+training:
+  batch_size: 128
+  epochs: 20
+  lr: 0.0003
+  val_split: 0.2
+  early_stopping_epochs: 5
+  
+training_task:
+  batch_size: 128
+  epochs: 20
+  lr: 0.0003
+  val_split: 0.2
+  early_stopping_epochs: 10
+
+estimate_network_params:
+  hidden_dim: 256
+  num_classes: 10
+
+paths:
+  data_dir: /home/machenike/bmml/DataMetaMap/data
+  train_parquet: /home/machenike/bmml/DataMetaMap/pretrain_embeddings/train_embeds.parquet
+  test_parquet: /home/machenike/bmml/DataMetaMap/pretrain_embeddings/test_embeds.parquet
+  checkpoint: /home/machenike/bmml/DataMetaMap/checkpoints/${pretrain_dataset_name}_pretrain.pt
+  checkpoint_task: /home/machenike/bmml/DataMetaMap/checkpoints/best_model.pt
+  save_logs: /home/machenike/bmml/DataMetaMap/logs/pretrain_to_task_logs/${pretrain_dataset_name}-${task_dataset_name}.yaml

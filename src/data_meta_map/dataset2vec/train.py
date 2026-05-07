@@ -1,0 +1,199 @@
+from abc import ABC, abstractmethod
+from typing import Any, Mapping
+
+import torch
+from torch import Tensor, optim
+from torch.optim.lr_scheduler import LinearLR
+
+from .config import OptimizerConfig
+
+
+try:
+    import pytorch_lightning as pl  # type: ignore
+except Exception:  # pragma: no cover
+    # Optional dependency: the library can still be imported and used for
+    # embedding with pre-trained weights even if Lightning (or its transitive
+    # deps) is not available in the runtime.
+    pl = None  # type: ignore
+
+
+if pl is None:  # pragma: no cover
+    class _LightningModuleFallback(torch.nn.Module):
+        """Minimal subset of LightningModule API used by this project."""
+
+        def save_hyperparameters(self, *args: Any, **kwargs: Any) -> None:
+            return None
+
+        def log(self, *args: Any, **kwargs: Any) -> None:
+            return None
+
+        @property
+        def device(self) -> torch.device:
+            # Keep behavior close to Lightning: default to cpu if the module
+            # is not moved to a device explicitly.
+            return next(self.parameters(), torch.empty(0)).device
+
+
+    _LightningBaseParent = _LightningModuleFallback
+else:
+    _LightningBaseParent = pl.LightningModule
+
+
+class LightningBase(_LightningBaseParent, ABC):
+
+    def __init__(self, optimizer_config: OptimizerConfig = OptimizerConfig()):
+        super().__init__()
+        self.gamma = optimizer_config.gamma
+        self.optimizer_cls = optimizer_config.optimizer_cls
+        self.learning_rate = optimizer_config.learning_rate
+        self.weight_decay = optimizer_config.weight_decay
+        self.save_hyperparameters()
+
+    @abstractmethod
+    def forward(self, X: Tensor, y: Tensor) -> Tensor:
+        pass
+
+    @abstractmethod
+    def calculate_loss(self, labels: Tensor, similarities: Tensor) -> Tensor:
+        pass
+
+    # ------------------------------------------------------------------ #
+    #                         Training hooks                               #
+    # ------------------------------------------------------------------ #
+
+    def on_train_epoch_start(self) -> None:
+        self.training_labels: list[Tensor] = []
+        self.training_predictions: list[Tensor] = []
+
+    def training_step(
+        self,
+        batch: list[tuple[Tensor, Tensor, Tensor, Tensor, int]],
+        batch_idx: int,  # ✅ добавлен
+    ) -> Mapping[str, Tensor]:
+        labels, similarities = self.extract_labels_and_similarities_from_batch(
+            batch
+        )
+        loss = self.calculate_loss(labels, similarities)
+        self.log(
+            "train_step_loss", loss,
+            prog_bar=True, batch_size=len(batch)
+        )
+        return {"loss": loss, "predictions": similarities}
+
+    def on_train_batch_end(
+        self,
+        outputs,
+        batch,
+        batch_idx: int,  # ✅ добавлен
+    ) -> None:
+        if isinstance(outputs, Mapping):
+            self.training_predictions.append(outputs["predictions"])
+        else:
+            raise TypeError("outputs should have type Mapping[str, Any]")
+        self.training_labels.append(Tensor([obs[-1] for obs in batch]))
+
+    def on_train_epoch_end(self) -> None:
+        training_labels = torch.concat(self.training_labels, dim=0)
+        training_predictions = torch.concat(self.training_predictions, dim=0)
+        self.log(
+            "train_accuracy",
+            (
+                training_labels.to(self.device)
+                == (training_predictions >= 0.5)
+                .type(torch.int32)
+                .to(self.device)
+            )
+            .type(torch.float32)
+            .mean(),
+        )
+        self.log(
+            "train_loss",
+            self.calculate_loss(training_labels, training_predictions),
+        )
+
+    # ------------------------------------------------------------------ #
+    #                        Validation hooks                              #
+    # ------------------------------------------------------------------ #
+
+    def on_validation_epoch_start(self) -> None:
+        self.validation_labels: list[Tensor] = []
+        self.validation_predictions: list[Tensor] = []
+
+    def validation_step(
+        self,
+        batch: list[tuple[Tensor, Tensor, Tensor, Tensor, int]],
+        batch_idx: int,  # ✅ исправлено — была главная причина ошибки
+    ) -> Mapping[str, Tensor]:
+        labels, similarities = self.extract_labels_and_similarities_from_batch(
+            batch
+        )
+        loss = self.calculate_loss(labels, similarities)
+        return {"loss": loss, "predictions": similarities}
+
+    def on_validation_batch_end(
+        self,
+        outputs,
+        batch,
+        batch_idx: int,  # ✅ добавлен
+        dataloader_idx: int = 0,
+    ) -> None:
+        if isinstance(outputs, Mapping):
+            self.validation_predictions.append(outputs["predictions"])
+        else:
+            raise TypeError("outputs should have type Mapping[str, Any]")
+        self.validation_labels.append(Tensor([obs[-1] for obs in batch]))
+
+    def on_validation_epoch_end(self) -> None:
+        validation_labels = torch.concat(self.validation_labels, dim=0)
+        validation_predictions = torch.concat(
+            self.validation_predictions, dim=0
+        )
+        self.log(
+            "val_accuracy",
+            (
+                validation_labels.to(self.device)
+                == (validation_predictions >= 0.5)
+                .type(torch.int32)
+                .to(self.device)
+            )
+            .type(torch.float32)
+            .mean(),
+        )
+        self.log(
+            "val_loss",
+            self.calculate_loss(validation_labels, validation_predictions),
+        )
+
+    # ------------------------------------------------------------------ #
+    #                           Helpers                                    #
+    # ------------------------------------------------------------------ #
+
+    def extract_labels_and_similarities_from_batch(
+        self, batch: list[tuple[Tensor, Tensor, Tensor, Tensor, int]]
+    ) -> tuple[Tensor, Tensor]:
+        similarities = []
+        labels = []
+        for X1, y1, X2, y2, label in batch:
+            emb1 = self.forward(X1, y1)
+            emb2 = self.forward(X2, y2)
+            similarities.append(
+                torch.exp(-self.gamma * torch.norm(emb1 - emb2))
+            )
+            labels.append(label)
+        return torch.Tensor(labels), torch.stack(similarities)
+
+    def configure_optimizers(self):
+        optimizer = self.optimizer_cls(
+            self.parameters(),
+            lr=self.learning_rate,
+            weight_decay=self.weight_decay,
+        )
+        scheduler = LinearLR(optimizer)
+        return [optimizer], [
+            {
+                "scheduler": scheduler,
+                "interval": "epoch",
+                "monitor": "val_accuracy",
+                "frequency": 1,
+            }
+        ]
