@@ -168,40 +168,36 @@ class TestExtractEmbeddingRealData:
                 module.weight.grad2_acc = torch.ones_like(module.weight) * 0.5
         return model
 
-    #def test_mnist_resnet(self):
-   #     dataset = datasets.__dict__['mnist'](root='../../data')[0]
-       # model = get_model('resnet18', pretrained=True,
-       #                   num_classes=int(max(dataset.targets)+1)).cuda()
-     #   model = get_model('resnet18', pretrained=True,
-    #                      num_classes=int(max(dataset.targets)+1))
-     #   task2vec_embedder = Task2Vec(model, skip_layers=6, max_samples=200)
-     #   emb = task2vec_embedder.embed(dataset)
-     #   assert isinstance(emb, np.ndarray)
-     #   assert emb.shape == (7680, )
+    def test_mnist_resnet(self):
+        dataset = datasets.__dict__['mnist'](root='../../data')[0]
+        model = get_model('resnet18', pretrained=True,
+                          num_classes=int(max(dataset.targets)+1)).cuda()
+        task2vec_embedder = Task2Vec(model, skip_layers=6, max_samples=200)
+        emb = task2vec_embedder.embed(dataset)
+        assert isinstance(emb, np.ndarray)
+        assert emb.shape == (7680, )
 
-  #  def test_mnist_resnet_less_skip(self):
-   #     dataset = datasets.__dict__['mnist'](root='../../data')[0]
-       # model = get_model('resnet18', pretrained=True,
-       #                   num_classes=int(max(dataset.targets)+1)).cuda()
-    #    model = get_model('resnet18', pretrained=True,
-    #                      num_classes=int(max(dataset.targets)+1))
-    #    task2vec_embedder = Task2Vec(model, skip_layers=2, max_samples=200)
-    #    emb = task2vec_embedder.embed(dataset)
-    #    assert isinstance(emb, np.ndarray)
-     #   assert emb.shape == (9472,)
+    def test_mnist_resnet_less_skip(self):
+        dataset = datasets.__dict__['mnist'](root='../../data')[0]
+        model = get_model('resnet18', pretrained=True,
+                          num_classes=int(max(dataset.targets)+1)).cuda()
+        model = get_model('resnet18', pretrained=True,
+                          num_classes=int(max(dataset.targets)+1))
+        task2vec_embedder = Task2Vec(model, skip_layers=2, max_samples=200)
+        emb = task2vec_embedder.embed(dataset)
+        assert isinstance(emb, np.ndarray)
+        assert emb.shape == (9472,)
 
-   # def test_extract_hessian(self):
-    #    dataset = datasets.__dict__['mnist'](root='../../data')[0]
-       # model = get_model('resnet18', pretrained=True,
-      #                    num_classes=int(max(dataset.targets)+1)).cuda()
-      #  model = get_model('resnet18', pretrained=True,
-    #                      num_classes=int(max(dataset.targets)+1))
-    #    task2vec_embedder = Task2Vec(model, skip_layers=2, max_samples=200)
-    #    emb = task2vec_embedder.embed(dataset, create_final_embedding=False)
-    #    assert isinstance(emb.hessian, np.ndarray)
-    #    assert isinstance(emb.scale, np.ndarray)
-    #    assert emb.scale.shape == (9472,)
-     #   assert emb.hessian.shape == (9472,)
+    def test_extract_hessian(self):
+        dataset = datasets.__dict__['mnist'](root='../../data')[0]
+        model = get_model('resnet18', pretrained=True,
+                          num_classes=int(max(dataset.targets)+1)).cuda()
+        task2vec_embedder = Task2Vec(model, skip_layers=2, max_samples=200)
+        emb = task2vec_embedder.embed(dataset, create_final_embedding=False)
+        assert isinstance(emb.hessian, np.ndarray)
+        assert isinstance(emb.scale, np.ndarray)
+        assert emb.scale.shape == (9472,)
+        assert emb.hessian.shape == (9472,)
 
 
 class TestDistanceFunctions:
