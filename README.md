@@ -104,7 +104,6 @@ python -m pip install -e ".[dev,viz]"
 
 ## 🚀 Quickstart
 
-<<<<<<< Updated upstream
 ### Dataset2Vec (tabular)
 
 `Dataset2VecEmbedder` trains on a collection of tabular datasets, then embeds a single dataset as a vector.
