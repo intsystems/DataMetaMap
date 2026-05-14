@@ -137,7 +137,7 @@ See [demo/wasserstein/simple_example1 (1).ipynb](demo/wasserstein/simple_example
 
 ### Task2Vec (supervised tasks)
 
-Task2Vec computes a task embedding based on the Fisher information of a probe network.
+`Task2Vec` computes a task embedding based on the Fisher information of a probe network.
 See [demo/task2vec/simple_example.ipynb](demo/task2vec/simple_example.ipynb) for an example workflow.
 
 ## 🎮 Demo
