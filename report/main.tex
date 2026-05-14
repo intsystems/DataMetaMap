@@ -222,6 +222,7 @@ The meta-feature extractor is modeled as a DeepSet-based architecture
     \hat{\varphi} := h \circ g \circ f,
 \end{equation}
 where $f$ embeds individual predictor/target pairs, $g$ aggregates embeddings through pooling, and $h$ produces the final dataset representation. The resulting embedding can be written as
+{\scriptsize
 \begin{equation}
 \hat{\varphi}(D)
 :=
@@ -235,7 +236,7 @@ f\bigl(X^{(D)}_{n,m}, Y^{(D)}_{n,t}\bigr)
 \right)
 \right).
 \end{equation}
-
+}
 To improve robustness and support datasets of varying sizes, embeddings are estimated from random multi-fidelity batches obtained by subsampling instances, predictors, and targets. The final dataset-level representation is computed as the average of multiple batch-level embeddings:
 \begin{equation}
     \hat{\varphi}(D)
@@ -278,6 +279,7 @@ distributions. Following the simplification used in the paper, each
 class-conditional label distribution $\nu_y$ is approximated by a
 Gaussian, so that the distance between labels can be written in
 closed form as the Bures--Wasserstein distance:
+{\small
 \begin{equation}
 W_2^2(\nu_y, \nu_{y'})
 =
@@ -288,6 +290,7 @@ W_2^2(\nu_y, \nu_{y'})
 - 2(\Sigma_y^{1/2}\Sigma_{y'}\Sigma_y^{1/2})^{1/2}
 \right),
 \end{equation}
+}
 where $u_y$ and $\Sigma_y$ denote the mean and covariance of the
 Gaussian associated with label $y$.
 
@@ -394,6 +397,23 @@ retrieval-based recommendation against logged pretrain-to-task
 transfer results. The same notebook also defines random and large
 pretraining baselines.
 
+\begin{table}[htbp]
+\centering
+\caption{Accuracy of Task2Vec-based pretraining selection compared to random and large-scale (ImageNet) baselines.}
+\label{tab:task2vec_transfer}
+{\scriptsize
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+& \textbf{MNIST} & \textbf{CIFAR-10} & \textbf{CIFAR-100} & \textbf{Letters} & \textbf{KMNIST} \\
+\midrule
+Task2Vec    & 0.9960 & 0.8798 & 0.4960 & 0.9326 & 0.9957 \\
+Random      & 0.9815 & 0.6390 & 0.3512 & 0.9335 & 0.9752 \\
+Big pretrain (ImageNet) & 0.9848 & 0.8834 & 0.6789 & 0.9197 & 0.9851 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}
+
 \paragraph{Wasserstein transfer-selection benchmark.}
 The notebook
 \texttt{benchmark\_wasserstein.ipynb}
@@ -427,7 +447,15 @@ The notebook \texttt{demo/dataset2vec/simple\_example.ipynb}
 constructs a balanced synthetic tabular meta-dataset, trains a
 Dataset2Vec encoder, and studies the resulting embeddings using
 PCA/t-SNE projections together with nearest-centroid classification in
-embedding space.
+embedding space. A typical visualisation of the learned embedding
+space is provided in Figure~\ref{fig:dataset2vec_demo}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{dataset2vec.jpeg}
+    \caption{t‑SNE projection of Dataset2Vec embeddings on a synthetic tabular meta‑dataset. Colours indicate ground‑truth dataset type (circles, moons, blobs).}
+    \label{fig:dataset2vec_demo}
+\end{figure}
 
 \paragraph{Wasserstein demo.}
 The notebook \texttt{demo/wasserstein/simple\_example1 (1).ipynb}
@@ -450,30 +478,6 @@ We encourage further work on standardizing the benchmarking interface
 across all methods, extending the released result tables with fully
 reproducible numeric comparisons, and turning MMD into a packaged
 executable component of the library.
-
-\appendices
-\section{Demo Experiments}
-Our demo code is available at the GitHub repository. The experiments 
-are divided into the following groups:
-
-\begin{itemize}
-    \item \textbf{Task2Vec Similarity Demo}: A notebook that embeds
-    \texttt{mnist}, \texttt{cifar10}, \texttt{cifar100}, and
-    \texttt{letters} with a pretrained \texttt{ResNet-18} probe and
-    visualizes the resulting task-distance matrix.
-    \item \textbf{Dataset2Vec Training and Visualization Demo}: A
-    synthetic tabular meta-dataset is generated, a Dataset2Vec model
-    is trained on balanced train/validation/test splits, and the
-    learned representations are explored with PCA/t-SNE projections
-    and nearest-centroid classification.
-    \item \textbf{Wasserstein Embedding Demo}: A compact notebook
-    computes class-wise Bures--Wasserstein distances, label embeddings,
-    and final task embeddings for small image-dataset collections.
-    \item \textbf{Transfer-Based Benchmark Notebooks}: Separate
-    notebooks evaluate Task2Vec and Wasserstein retrieval as heuristics
-    for choosing a source pretraining dataset before downstream
-    fine-tuning.
-\end{itemize}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
