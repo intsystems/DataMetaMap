@@ -26,11 +26,11 @@
 \IEEEpeerreviewmaketitle
 
 \begin{abstract}
-This report presents \textit{DataMetaMap}, a Python library designed to 
-represent multiple datasets in a unified vector space, enabling principled 
-comparison of dataset similarity. The library offers a comprehensive suite 
-of dataset embedding techniques compatible with PyTorch, addressing the 
-challenge of transferring knowledge across datasets with varying schemas in 
+This report presents \textit{DataMetaMap}, a Python library designed to
+represent multiple datasets in a unified vector space, enabling principled
+comparison of dataset similarity. The library offers a comprehensive suite
+of dataset embedding techniques compatible with PyTorch, addressing the
+challenge of transferring knowledge across datasets with varying schemas in
 meta-learning pipelines. We study four complementary approaches:
 Maximum Mean Discrepancy (MMD), Task2Vec, Dataset2Vec, and
 Wasserstein Task Embedding. The repository includes executable demos
@@ -39,33 +39,33 @@ transfer-oriented retrieval.
 \end{abstract}
 
 \section{Introduction}
-A fundamental challenge in modern machine learning is the efficient 
-transfer of knowledge across tasks and datasets. Given a new target 
-dataset, a practitioner must decide which pretrained model or which 
-prior learning experience is most relevant — a decision that 
+A fundamental challenge in modern machine learning is the efficient
+transfer of knowledge across tasks and datasets. Given a new target
+dataset, a practitioner must decide which pretrained model or which
+prior learning experience is most relevant — a decision that
 currently relies heavily on human intuition or exhaustive search.
 
-A principled solution requires the ability to \emph{compare} datasets 
-quantitatively: if datasets can be embedded into a common vector space 
-where geometric proximity reflects task similarity, then finding the 
-most relevant prior experience reduces to a nearest-neighbor query. 
-Such embeddings, often called \emph{meta-features} or \emph{task 
+A principled solution requires the ability to \emph{compare} datasets
+quantitatively: if datasets can be embedded into a common vector space
+where geometric proximity reflects task similarity, then finding the
+most relevant prior experience reduces to a nearest-neighbor query.
+Such embeddings, often called \emph{meta-features} or \emph{task
 embeddings}, form the foundation of data-driven meta-learning.
 
-Existing approaches to dataset representation span a wide spectrum. 
-Classical engineered meta-features (number of instances, class 
-imbalance, statistical moments of features) are cheap to compute but 
-have limited expressivity and require schema-specific design. 
+Existing approaches to dataset representation span a wide spectrum.
+Classical engineered meta-features (number of instances, class
+imbalance, statistical moments of features) are cheap to compute but
+have limited expressivity and require schema-specific design.
 Kernel-based methods such as Maximum Mean Discrepancy (MMD) provide
 distribution-level comparisons without parametric assumptions but
 scale poorly with dimensionality. More recent neural and
 geometry-aware approaches --- Task2Vec, Dataset2Vec, and Wasserstein
 Task Embedding --- learn rich, task-agnostic representations but
 differ substantially in their inductive biases, computational cost,
-and applicability 
+and applicability
 to datasets with varying schemas.
 
-We present \texttt{DataMetaMap}, a unified Python library that 
+We present \texttt{DataMetaMap}, a unified Python library that
 combines these dataset embedding methods within a practical,
 PyTorch-compatible framework. Our contributions are:
 
@@ -167,15 +167,15 @@ bandwidth $\sigma$ selected via the median heuristic.
 \subsection{Task2Vec}
 
 \subsubsection*{Overview}
-Achille et al.~\cite{achille2019task2vec} propose Task2Vec, a method 
-for embedding machine learning tasks into a fixed-dimensional vector 
-space such that geometric distances between embeddings reflect 
-meaningful task similarity. The core idea is to use the diagonal of 
+Achille et al.~\cite{achille2019task2vec} propose Task2Vec, a method
+for embedding machine learning tasks into a fixed-dimensional vector
+space such that geometric distances between embeddings reflect
+meaningful task similarity. The core idea is to use the diagonal of
 the Fisher Information Matrix (FIM) of a pretrained \emph{probe
 network} --- a fixed feature extractor briefly fine-tuned on the
 target task --- as the task embedding. This captures the sensitivity
-of the probe's parameters to the task's data distribution, producing 
-embeddings that are stable, comparable across tasks, and correlated 
+of the probe's parameters to the task's data distribution, producing
+embeddings that are stable, comparable across tasks, and correlated
 with transfer learning performance.
 
 \subsubsection*{Methodology}
@@ -197,8 +197,8 @@ where the empirical FIM diagonal is estimated as
              {\partial \theta_i}
     \right)^{2}.
 \end{equation}
-The resulting embedding $\varphi(D)$ encodes which parameters of the 
-probe are most activated by dataset $D$. Task similarity is then 
+The resulting embedding $\varphi(D)$ encodes which parameters of the
+probe are most activated by dataset $D$. Task similarity is then
 measured via the cosine distance between embeddings:
 \begin{equation}
     d(D, D')
@@ -351,21 +351,21 @@ source of the computational gain.
 %------------------------------------------------------------
 
 \section{Research Methodology}
-Our research methodology involved comprehensive implementation and 
-experimental validation of each dataset embedding technique. We 
+Our research methodology involved comprehensive implementation and
+experimental validation of each dataset embedding technique. We
 followed a systematic approach:
 
 \begin{itemize}
-    \item \textbf{Library Design}: We built a unified PyTorch-compatible 
-    interface where each embedding method is implemented as a 
-    self-contained module with consistent \texttt{fit()} and 
+    \item \textbf{Library Design}: We built a unified PyTorch-compatible
+    interface where each embedding method is implemented as a
+    self-contained module with consistent \texttt{fit()} and
     \texttt{embed()} methods.
-    \item \textbf{Algorithm Implementation}: Each method was implemented 
-    as a separate class following a common base interface, enabling 
+    \item \textbf{Algorithm Implementation}: Each method was implemented
+    as a separate class following a common base interface, enabling
     straightforward benchmarking and extension.
-    \item \textbf{Experimental Validation}: We conducted controlled 
-    experiments on standard meta-dataset benchmarks to evaluate 
-    embedding quality, dataset similarity retrieval accuracy, and 
+    \item \textbf{Experimental Validation}: We conducted controlled
+    experiments on standard meta-dataset benchmarks to evaluate
+    embedding quality, dataset similarity retrieval accuracy, and
     downstream meta-learning performance.
 \end{itemize}
 
@@ -404,17 +404,41 @@ resulting embeddings, and then recommends the closest source dataset
 for each target task. When transfer logs are available, the notebook
 compares these recommendations with observed downstream accuracies.
 
+\paragraph{MMD pretrain-selection benchmark.}
+The notebook
+\path{benchmarks/pretrain_benchmark/mmd/benchmark_mmd.ipynb}
+runs the same transfer-selection experiment with the
+\texttt{MMDEmbedder}. For every target dataset it computes the pairwise
+$\widehat{\mathrm{MMD}}^{2}$ matrix (with a frozen ResNet-18 encoder by
+default, falling back to raw pixels as an ablation), recommends the
+nearest source dataset, and reports the resulting downstream test
+accuracy alongside the random and ImageNet-pretraining baselines from
+the Wasserstein and Task2Vec benchmarks.
+
 \paragraph{Status of MMD in the repository.}
-MMD is retained in this report as an important classical baseline and
-as part of the conceptual comparison framework. At the same time, the
-current public repository places its strongest executable emphasis on
-Dataset2Vec, Task2Vec, and Wasserstein components, including demos and
-benchmark notebooks. Packaging MMD as a first-class module would be a
-natural next step for future development.
+MMD is now packaged as a first-class module in
+\path{src/data_meta_map/mmd/}, with a top-level
+\path{mmd_embedder.py} class implementing the same
+\texttt{BaseEmbedder} interface as the other methods. The module ships
+the biased and unbiased empirical estimators of
+$\widehat{\mathrm{MMD}}^{2}$, a Random Fourier Features mean
+embedding for explicit per-dataset vectors, three pluggable
+representation backends (raw features, a frozen pretrained encoder,
+and a per-dataset autoencoder), unit tests, a demo notebook, and the
+benchmark notebook described above.
 
 \subsection{Demonstration Notebooks}
 The repository also includes method-specific notebooks intended for
 qualitative validation and onboarding.
+
+\paragraph{MMD demo.}
+The notebook \path{demo/mmd/simple_example.ipynb} validates the
+empirical $\widehat{\mathrm{MMD}}^{2}$ estimators on synthetic
+Gaussians, sweeps the RBF bandwidth around the median heuristic, and
+visualizes pairwise dataset similarity across MNIST, CIFAR-10, KMNIST,
+and EMNIST-letters using all three representation backends (raw
+pixels, a frozen ResNet-18 encoder, and a per-dataset autoencoder),
+making the role of the auxiliary model explicit.
 
 \paragraph{Task2Vec demo.}
 The notebook \texttt{demo/task2vec/simple\_example.ipynb} embeds a
@@ -438,22 +462,24 @@ feature space, and construction of reference-based task embeddings.
 \section{Conclusions and Recommendations}
 \texttt{DataMetaMap} provides a growing toolkit for dataset
 representation and comparison. In its current public form, the
-repository combines packaged Dataset2Vec and Wasserstein embedders, a
-Task2Vec subpackage, theoretical coverage of MMD as a classical
-baseline, and benchmark notebooks for transfer and meta-learning
-scenarios.
+repository combines packaged Dataset2Vec, Wasserstein, and MMD
+embedders, a Task2Vec subpackage, and benchmark notebooks for
+transfer and meta-learning scenarios. The MMD module additionally
+ships three pluggable representation backends (raw features, a
+frozen pretrained encoder, and a per-dataset autoencoder) that
+realise the multi-representation perspective on MMD discussed in the
+Methodology section.
 
 The existing benchmark suite is designed to test the hypothesis that
 learned embeddings capture richer dataset structure than purely
 distributional baselines, especially when schemas vary across tasks.
 We encourage further work on standardizing the benchmarking interface
-across all methods, extending the released result tables with fully
-reproducible numeric comparisons, and turning MMD into a packaged
-executable component of the library.
+across all methods and on extending the released result tables with
+fully reproducible numeric comparisons.
 
 \appendices
 \section{Demo Experiments}
-Our demo code is available at the GitHub repository. The experiments 
+Our demo code is available at the GitHub repository. The experiments
 are divided into the following groups:
 
 \begin{itemize}
@@ -469,10 +495,20 @@ are divided into the following groups:
     \item \textbf{Wasserstein Embedding Demo}: A compact notebook
     computes class-wise Bures--Wasserstein distances, label embeddings,
     and final task embeddings for small image-dataset collections.
+    \item \textbf{MMD Demo}: A notebook that validates the empirical
+    $\widehat{\mathrm{MMD}}^{2}$ estimators on synthetic Gaussians,
+    sweeps the RBF bandwidth around the median heuristic, and
+    visualizes pairwise dataset similarity for raw pixels, a frozen
+    ResNet-18 encoder, and a small per-dataset autoencoder side by
+    side.
+    \item \textbf{Hyperparameter-Optimization Benchmark}: An
+    end-to-end script compares random search, warm start from
+    engineered meta-features, and warm start from Dataset2Vec
+    embeddings under the ADTM metric.
     \item \textbf{Transfer-Based Benchmark Notebooks}: Separate
-    notebooks evaluate Task2Vec and Wasserstein retrieval as heuristics
-    for choosing a source pretraining dataset before downstream
-    fine-tuning.
+    notebooks evaluate Task2Vec, Wasserstein, and MMD retrieval as
+    heuristics for choosing a source pretraining dataset before
+    downstream fine-tuning.
 \end{itemize}
 
 \bibliographystyle{IEEEtran}

@@ -104,6 +104,7 @@ python -m pip install -e ".[dev,viz]"
 
 ## 🚀 Quickstart
 
+<<<<<<< Updated upstream
 ### Dataset2Vec (tabular)
 
 `Dataset2VecEmbedder` trains on a collection of tabular datasets, then embeds a single dataset as a vector.
@@ -140,10 +141,45 @@ See [demo/wasserstein/simple_example1 (1).ipynb](demo/wasserstein/simple_example
 `Task2Vec` computes a task embedding based on the Fisher information of a probe network.
 See [demo/task2vec/simple_example.ipynb](demo/task2vec/simple_example.ipynb) for an example workflow.
 
+### MMD
+
+Compute the 
+Maximum Mean Discrepancy between two datasets and project a
+collection of datasets into a shared 2-D space:
+
+```python
+import torch
+from data_meta_map import MMDEmbedder, mmd
+from data_meta_map.mmd.encoders import PretrainedEncoder
+
+# 1. One-liner MMD^2 between two flat tensors
+A = torch.randn(500, 16)
+B = torch.randn(500, 16) + 0.5
+print(float(mmd(A, B, kernel="rbf", estimator="unbiased")))
+
+# 2. Project K datasets into a common R^emb_dim space
+embedder = MMDEmbedder(
+    mode="distance",                                  # or "rff"
+    kernel="rbf",
+    bandwidth="median",
+    encoder=PretrainedEncoder("resnet18", pretrained=True),
+    emb_dim=2,
+    max_samples=500,
+)
+vectors = embedder.embed([dataset_a, dataset_b, dataset_c])
+```
+
+The `encoder=` argument is the *auxiliary model* dial: swap in a
+`RawEncoder`, a frozen pretrained network, or a small per-dataset
+`GenerativeEncoder` (AE) to control the representation space MMD operates
+in.
+
 ## 🎮 Demo
 Notebooks are in:
 - [demo/dataset2vec/simple_example.ipynb](demo/dataset2vec/simple_example.ipynb)
 - [demo/task2vec/simple_example.ipynb](demo/task2vec/simple_example.ipynb)
+Method-specific notebooks:
+- [demo/mmd/simple_example.ipynb](demo/mmd/simple_example.ipynb)
 - [demo/wasserstein/simple_example1 (1).ipynb](demo/wasserstein/simple_example1%20(1).ipynb)
 
 ## 📈 Benchmarks

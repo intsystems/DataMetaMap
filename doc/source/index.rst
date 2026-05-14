@@ -24,6 +24,7 @@ Welcome to Mixture Lib!
    :caption: Packages:
 
    train.rst
+   mmd.rst
 
 
 Indices and tables
